@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Numerics;
+using System.Text;
+
+namespace OpenSkies.Geometry
+{
+    public struct RectangleF
+    {
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Width { get; set; }
+        public float Height { get; set; }
+
+        public float Left => X;
+        public float Right => X + Width;
+        public float Bottom => Y;
+        public float Top => Y + Height;
+
+        public Vector2 TopLeft => new Vector2(Left, Top);
+        public Vector2 TopRight => new Vector2(Right, Top);
+        public Vector2 BottomLeft => new Vector2(Left, Bottom);
+        public Vector2 BottomRight => new Vector2(Right, Bottom);
+
+        public Vector2 Size => new Vector2(Width, Height);
+        public Vector2 Position => new Vector2(X, Y);
+
+        public RectangleF(float x, float y, float width, float height)
+        {
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+        }
+    }
+}

@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Tortuga.DesktopPlatform\Tortuga.DesktopPlatform.csproj" />
+    <ProjectReference Include="..\Tortuga\Tortuga.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\song.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="hello">Hello World, Click Me!</string>
+    <string name="app_name">OpenSkiesEngine.AndroidPlatform</string>
+    <string name="app_name1">OpenSkiesEngine.AndroidPlatform1</string>
+</resources>
