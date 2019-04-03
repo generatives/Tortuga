@@ -104,19 +104,19 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <AndroidResource Include="Resources\raw\song.mp3">
+      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
+    </AndroidResource>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Tortuga.AndroidPlatform\Tortuga.AndroidPlatform.csproj">
       <Project>{2653fefc-be69-466c-aee0-e487aaec4a04}</Project>
       <Name>Tortuga.AndroidPlatform</Name>
     </ProjectReference>
     <ProjectReference Include="..\Tortuga\Tortuga.csproj">
-      <Project>{F0B92426-72AE-4474-8C61-96F552E25DE7}</Project>
+      <Project>{e917ebc6-25e8-492c-8397-2c95feec7515}</Project>
       <Name>Tortuga</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\raw\song.mp3">
-      <Generator>MSBuild:UpdateGeneratedFiles</Generator>
-    </AndroidResource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

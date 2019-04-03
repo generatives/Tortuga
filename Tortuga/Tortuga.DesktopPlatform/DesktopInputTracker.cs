@@ -2,45 +2,46 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Tortuga.Platform;
 using Veldrid;
 
-namespace OpenSkiesDemo
+namespace Tortuga.DesktopPlatform
 {
-    public static class InputTracker
+    public class DesktopInputTracker : IInputTracker
     {
-        private static HashSet<Key> _currentlyPressedKeys = new HashSet<Key>();
-        private static HashSet<Key> _newKeysThisFrame = new HashSet<Key>();
+        private HashSet<TKey> _currentlyPressedKeys = new HashSet<TKey>();
+        private HashSet<TKey> _newKeysThisFrame = new HashSet<TKey>();
 
-        private static HashSet<MouseButton> _currentlyPressedMouseButtons = new HashSet<MouseButton>();
-        private static HashSet<MouseButton> _newMouseButtonsThisFrame = new HashSet<MouseButton>();
+        private HashSet<TMouseButton> _currentlyPressedMouseButtons = new HashSet<TMouseButton>();
+        private HashSet<TMouseButton> _newMouseButtonsThisFrame = new HashSet<TMouseButton>();
 
-        public static Vector2 MousePosition { get; private set; }
-        public static Vector2 MouseDelta { get; private set; }
-        public static InputSnapshot FrameSnapshot { get; private set; }
+        public Vector2 PointerPosition { get => MousePosition; }
+        public bool PointerDown { get => GetMouseButtonDown(TMouseButton.Button1); }
+        public Vector2 MousePosition { get; private set; }
+        public Vector2 MouseDelta { get; private set; }
 
-        public static bool GetKey(Key key)
+        public bool GetKey(TKey key)
         {
             return _currentlyPressedKeys.Contains(key);
         }
 
-        public static bool GetKeyDown(Key key)
+        public bool GetKeyDown(TKey key)
         {
             return _newKeysThisFrame.Contains(key);
         }
 
-        public static bool GetMouseButton(MouseButton button)
+        public bool GetMouseButtonDown(TMouseButton button)
         {
             return _currentlyPressedMouseButtons.Contains(button);
         }
 
-        public static bool GetMouseButtonDown(MouseButton button)
+        public bool GetMouseButtonPressed(TMouseButton button)
         {
             return _newMouseButtonsThisFrame.Contains(button);
         }
 
-        public static void UpdateFrameInput(InputSnapshot snapshot)
+        public void UpdateFrameInput(InputSnapshot snapshot)
         {
-            FrameSnapshot = snapshot;
             _newKeysThisFrame.Clear();
             _newMouseButtonsThisFrame.Clear();
 
@@ -52,11 +53,11 @@ namespace OpenSkiesDemo
                 KeyEvent ke = snapshot.KeyEvents[i];
                 if (ke.Down)
                 {
-                    KeyDown(ke.Key);
+                    KeyDown((TKey)ke.Key);
                 }
                 else
                 {
-                    KeyUp(ke.Key);
+                    KeyUp((TKey)ke.Key);
                 }
             }
             for (int i = 0; i < snapshot.MouseEvents.Count; i++)
@@ -64,22 +65,22 @@ namespace OpenSkiesDemo
                 MouseEvent me = snapshot.MouseEvents[i];
                 if (me.Down)
                 {
-                    MouseDown(me.MouseButton);
+                    MouseDown((TMouseButton)me.MouseButton);
                 }
                 else
                 {
-                    MouseUp(me.MouseButton);
+                    MouseUp((TMouseButton)me.MouseButton);
                 }
             }
         }
 
-        private static void MouseUp(MouseButton mouseButton)
+        private void MouseUp(TMouseButton mouseButton)
         {
             _currentlyPressedMouseButtons.Remove(mouseButton);
             _newMouseButtonsThisFrame.Remove(mouseButton);
         }
 
-        private static void MouseDown(MouseButton mouseButton)
+        private void MouseDown(TMouseButton mouseButton)
         {
             if (_currentlyPressedMouseButtons.Add(mouseButton))
             {
@@ -87,13 +88,13 @@ namespace OpenSkiesDemo
             }
         }
 
-        private static void KeyUp(Key key)
+        private void KeyUp(TKey key)
         {
             _currentlyPressedKeys.Remove(key);
             _newKeysThisFrame.Remove(key);
         }
 
-        private static void KeyDown(Key key)
+        private void KeyDown(TKey key)
         {
             if (_currentlyPressedKeys.Add(key))
             {

@@ -10,8 +10,8 @@
     <TemplateGuid>{9ef11e43-1701-4396-8835-8392d57abb70}</TemplateGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OpenSkiesEngine.AndroidPlatform</RootNamespace>
-    <AssemblyName>OpenSkiesEngine.AndroidPlatform</AssemblyName>
+    <RootNamespace>Tortuga.AndroidPlatform</RootNamespace>
+    <AssemblyName>Tortuga.AndroidPlatform</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
@@ -41,10 +41,13 @@
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AndroidInputTracker.cs" />
     <Compile Include="AndroidPlatform.cs" />
     <Compile Include="AndroidSound.cs" />
     <Compile Include="AndroidWindow.cs" />

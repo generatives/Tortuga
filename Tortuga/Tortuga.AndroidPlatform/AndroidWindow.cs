@@ -23,6 +23,10 @@ namespace Tortuga.AndroidPlatform
         public GraphicsDevice GraphicsDevice => _veldridSurfaceView.GraphicsDevice;
         public Swapchain MainSwapchain => _veldridSurfaceView.MainSwapchain;
 
+
+        private AndroidInputTracker _inputTracker;
+        public IInputTracker InputTracker { get => _inputTracker; }
+
         private VeldridSurfaceView _veldridSurfaceView;
 
         public AndroidWindow(VeldridSurfaceView veldridSurfaceView)
@@ -31,6 +35,14 @@ namespace Tortuga.AndroidPlatform
             _veldridSurfaceView.DeviceCreated += () => GraphicsDeviceCreated?.Invoke();
             _veldridSurfaceView.Resized += () => Resized?.Invoke();
             _veldridSurfaceView.Tick += () => Tick?.Invoke();
+
+            _inputTracker = new AndroidInputTracker();
+            _veldridSurfaceView.Touch += _veldridSurfaceView_Touch;
+        }
+
+        private void _veldridSurfaceView_Touch(object sender, Android.Views.View.TouchEventArgs e)
+        {
+            e.Handled = _inputTracker.ProcessMotionEvent(e.Event);
         }
 
         public Task Run()

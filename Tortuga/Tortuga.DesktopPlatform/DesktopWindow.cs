@@ -26,6 +26,8 @@ namespace Tortuga.DesktopPlatform
 
         public GraphicsDevice GraphicsDevice { get; private set; }
         public Swapchain MainSwapchain => GraphicsDevice.MainSwapchain;
+        private DesktopInputTracker _inputTracker;
+        public IInputTracker InputTracker { get => _inputTracker; }
 
         private WindowCreateInfo _windowCreateInfo;
         private GraphicsDeviceOptions _graphicsDeviceOptions;
@@ -34,6 +36,7 @@ namespace Tortuga.DesktopPlatform
         {
             _windowCreateInfo = arg;
             _graphicsDeviceOptions = options;
+            _inputTracker = new DesktopInputTracker();
         }
 
         public Task Run()
@@ -56,6 +59,8 @@ namespace Tortuga.DesktopPlatform
                         GraphicsDevice.ResizeMainWindow((uint)Window.Width, (uint)Window.Height);
                         Resized?.Invoke();
                     }
+                    var inputSnapshot = Window.PumpEvents();
+                    _inputTracker.UpdateFrameInput(inputSnapshot);
                     Tick?.Invoke();
                 }
             }, TaskCreationOptions.LongRunning);

@@ -17,6 +17,7 @@ namespace Tortuga.Platform
 
         GraphicsDevice GraphicsDevice { get; }
         Swapchain MainSwapchain { get; }
+        IInputTracker InputTracker { get; }
 
         Task Run();
         void Pause();

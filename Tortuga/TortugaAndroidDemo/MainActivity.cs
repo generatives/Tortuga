@@ -2,19 +2,19 @@
 using Android.Content.PM;
 using Android.OS;
 using OpenSkies.Drawing;
-using OpenSkies.Geometry;
 using Tortuga.AndroidPlatform;
 using Tortuga.Audio;
 using Tortuga.Platform;
 using System.Numerics;
 using System.Threading;
 using Veldrid;
+using System;
 
 namespace OpenSkiesAndroidDemo
 {
     [Activity(
         MainLauncher = true,
-        Label = "OpenSkiesAndroidDemo",
+        Label = "TortugaDemo",
         ConfigurationChanges = ConfigChanges.KeyboardHidden | ConfigChanges.Orientation | ConfigChanges.ScreenSize
         )]
     public class MainActivity : Activity

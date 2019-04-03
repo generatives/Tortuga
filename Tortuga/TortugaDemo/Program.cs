@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using Veldrid;
 using Veldrid.StartupUtilities;
+using Tortuga.Platform;
 
 namespace OpenSkiesDemo
 {
@@ -23,7 +24,7 @@ namespace OpenSkiesDemo
     class Game
     {
         private Vector2 objectPosition;
-
+        private IWindow _window;
         public void Run()
         {
             var platform = new DesktopPlatform();
@@ -34,7 +35,7 @@ namespace OpenSkiesDemo
                 Y = 100,
                 WindowWidth = 1280,
                 WindowHeight = 720,
-                WindowTitle = "OpenSkies Demo"
+                WindowTitle = "Tortuga Demo"
             };
 
             GraphicsDeviceOptions options = new GraphicsDeviceOptions(
@@ -48,7 +49,7 @@ namespace OpenSkiesDemo
             options.Debug = true;
 #endif
 
-            var _window = platform.CreateWindow(wci, options);
+            _window = platform.CreateWindow(wci, options);
             DrawDevice drawDevice = null;
             _window.GraphicsDeviceCreated += () => drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
 
@@ -67,9 +68,6 @@ namespace OpenSkiesDemo
                 double newElapsed = sw.Elapsed.TotalSeconds;
                 sw.Restart();
                 float deltaSeconds = (float)(newElapsed - previousElapsed);
-
-                InputSnapshot inputSnapshot = (_window as DesktopWindow).Window.PumpEvents();
-                InputTracker.UpdateFrameInput(inputSnapshot);
 
                 Update(deltaSeconds);
 
@@ -93,22 +91,22 @@ namespace OpenSkiesDemo
         public void Update(float time)
         {
             var change = Vector2.Zero;
-            if (InputTracker.GetKey(Key.A))
+            if (_window.InputTracker.GetKey(TKey.A))
             {
                 change += new Vector2(-1, 0);
             }
 
-            if (InputTracker.GetKey(Key.D))
+            if (_window.InputTracker.GetKey(TKey.D))
             {
                 change += new Vector2(1, 0);
             }
 
-            if (InputTracker.GetKey(Key.W))
+            if (_window.InputTracker.GetKey(TKey.W))
             {
                 change += new Vector2(0, 1);
             }
 
-            if (InputTracker.GetKey(Key.S))
+            if (_window.InputTracker.GetKey(TKey.S))
             {
                 change += new Vector2(0, -1);
             }
