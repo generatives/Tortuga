@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace OpenSkies.Drawing
+namespace Tortuga.Drawing
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct DrawInfo

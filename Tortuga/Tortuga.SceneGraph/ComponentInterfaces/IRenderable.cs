@@ -1,11 +1,11 @@
-﻿using OpenSkies.Drawing;
+﻿using Tortuga.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenSkies.SceneGraph.Components
+namespace Tortuga.SceneGraph.Components
 {
     public interface IRenderable
     {

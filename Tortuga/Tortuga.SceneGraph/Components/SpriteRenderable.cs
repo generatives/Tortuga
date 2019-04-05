@@ -1,12 +1,12 @@
-﻿using OpenSkies.Drawing;
-using OpenSkies.Drawing.Resources;
+﻿using Tortuga.Drawing;
+using Tortuga.Drawing.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenSkies.SceneGraph.Components
+namespace Tortuga.SceneGraph.Components
 {
     public class SpriteRenderable : Component, IRenderable
     {

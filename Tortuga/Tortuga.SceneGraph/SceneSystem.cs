@@ -1,10 +1,10 @@
-﻿using OpenSkies.Drawing;
-using OpenSkies.SceneGraph;
+﻿using Tortuga.Drawing;
+using Tortuga.SceneGraph;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace OpenSkies.SceneGraph
+namespace Tortuga.SceneGraph
 {
     public class SceneSystem
     {

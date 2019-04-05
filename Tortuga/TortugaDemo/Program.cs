@@ -1,5 +1,5 @@
-﻿using OpenSkies.Drawing;
-using OpenSkies.Geometry;
+﻿using Tortuga.Drawing;
+using Tortuga.Geometry;
 using Tortuga.DesktopPlatform;
 using System;
 using System.Diagnostics;
@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Veldrid;
 using Veldrid.StartupUtilities;
 using Tortuga.Platform;
+using SixLabors.ImageSharp;
+using Veldrid.ImageSharp;
+using Tortuga.Graphics.Text;
 
 namespace OpenSkiesDemo
 {
@@ -25,6 +28,17 @@ namespace OpenSkiesDemo
     {
         private Vector2 objectPosition;
         private IWindow _window;
+        private double previousElapsed;
+        private Font font;
+        private Stopwatch sw;
+        private DrawDevice drawDevice;
+        private Vertex[] triangleVertices = new Vertex[]
+            {
+                new Vertex(new Vector2(0, 0), RgbaFloat.Orange, new Vector2(0, 0)),
+                new Vertex(new Vector2(10, 20), RgbaFloat.Blue, new Vector2(0.5f, 1)),
+                new Vertex(new Vector2(20, 0), RgbaFloat.Green, new Vector2(1, 0))
+            };
+
         public void Run()
         {
             var platform = new DesktopPlatform();
@@ -50,46 +64,31 @@ namespace OpenSkiesDemo
 #endif
 
             _window = platform.CreateWindow(wci, options);
-            DrawDevice drawDevice = null;
-            _window.GraphicsDeviceCreated += () => drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
+            _window.GraphicsDeviceCreated += LoadResources;
+            _window.Tick += Update;
 
-            Stopwatch sw = Stopwatch.StartNew();
+            sw = Stopwatch.StartNew();
             double previousElapsed = sw.Elapsed.TotalSeconds;
-
-            var triangleVertices = new Vertex[]
-            {
-                new Vertex(new Vector2(0, 0), RgbaFloat.Orange, new Vector2(0, 0)),
-                new Vertex(new Vector2(10, 20), RgbaFloat.Blue, new Vector2(0.5f, 1)),
-                new Vertex(new Vector2(20, 0), RgbaFloat.Green, new Vector2(1, 0))
-            };
-
-            _window.Tick += () =>
-            {
-                double newElapsed = sw.Elapsed.TotalSeconds;
-                sw.Restart();
-                float deltaSeconds = (float)(newElapsed - previousElapsed);
-
-                Update(deltaSeconds);
-
-                drawDevice.Begin(Matrix4x4.CreateScale(1f / _window.Width, 1f / _window.Height, 1f));
-                drawDevice.Draw(drawDevice.WhitePixel, new RectangleF(objectPosition.X - 15f, objectPosition.Y - 15f, 30f, 30f), RgbaFloat.White);
-                drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X - 50f, objectPosition.Y, 30f, 30f), RgbaFloat.Red);
-                drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X + 50f, objectPosition.Y, 30f, 30f));
-                drawDevice.Draw(drawDevice.Grid, triangleVertices);
-                drawDevice.Draw(drawDevice.WhitePixel, triangleVertices, Matrix3x2.CreateRotation(1) * Matrix3x2.CreateTranslation(new Vector2(-50, -50)));
-                drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), Matrix3x2.CreateTranslation(50, 0));
-                drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), RgbaFloat.CornflowerBlue, Matrix3x2.CreateTranslation(100, 0));
-                drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 0), -1);
-                drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 100), -0.5f, RgbaFloat.Grey);
-                drawDevice.End();
-            };
 
             var task = _window.Run();
             Task.WaitAll(task);
         }
 
-        public void Update(float time)
+        public void LoadResources()
         {
+            drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
+
+            var fontTexture = new ImageSharpTexture("Assets/testfont.png");
+            var fontDevTexture = fontTexture.CreateDeviceTexture(_window.GraphicsDevice, _window.GraphicsDevice.ResourceFactory);
+            font = new Font(fontDevTexture, 19, 19, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,;:?!-#\"'&()[]`\\/©@°+=*$<>%");
+        }
+
+        public void Update()
+        {
+            double newElapsed = sw.Elapsed.TotalSeconds;
+            sw.Restart();
+            float deltaSeconds = (float)(newElapsed - previousElapsed);
+
             var change = Vector2.Zero;
             if (_window.InputTracker.GetKey(TKey.A))
             {
@@ -132,6 +131,21 @@ namespace OpenSkiesDemo
             //{
             //    _camera.Zoom += new Vector2(-0.05f, -0.05f);
             //}
+
+
+            drawDevice.Begin(Matrix4x4.CreateScale(1f / _window.Width, 1f / _window.Height, 1f));
+            drawDevice.Draw(drawDevice.WhitePixel, new RectangleF(objectPosition.X - 15f, objectPosition.Y - 15f, 30f, 30f), RgbaFloat.White);
+            drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X - 50f, objectPosition.Y, 30f, 30f), RgbaFloat.Red);
+            drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X + 50f, objectPosition.Y, 30f, 30f));
+            drawDevice.Draw(drawDevice.Grid, triangleVertices);
+            drawDevice.Draw(drawDevice.WhitePixel, triangleVertices, Matrix3x2.CreateRotation(1) * Matrix3x2.CreateTranslation(new Vector2(-50, -50)));
+            drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), Matrix3x2.CreateTranslation(50, 0));
+            drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), RgbaFloat.CornflowerBlue, Matrix3x2.CreateTranslation(100, 0));
+            drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 0), -1);
+            drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 100), -0.5f, RgbaFloat.Grey);
+
+            TextRenderer.DrawText(drawDevice, font, "Rendering Text!", new Vector2(-300, 30));
+            drawDevice.End();
         }
     }
 }

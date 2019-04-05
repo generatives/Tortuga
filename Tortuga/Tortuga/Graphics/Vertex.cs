@@ -4,7 +4,7 @@ using System.Numerics;
 using System.Text;
 using Veldrid;
 
-namespace OpenSkies.Drawing
+namespace Tortuga.Drawing
 {
     public struct Vertex
     {

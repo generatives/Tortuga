@@ -5,7 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenSkies.SceneGraph.Components
+namespace Tortuga.SceneGraph.Components
 {
     public class Camera : Component
     {

@@ -16,6 +16,7 @@ namespace Tortuga.DesktopPlatform
         private HashSet<TMouseButton> _newMouseButtonsThisFrame = new HashSet<TMouseButton>();
 
         public Vector2 PointerPosition { get => MousePosition; }
+        public Vector2 PointerDelta { get => MouseDelta; }
         public bool PointerDown { get => GetMouseButtonDown(TMouseButton.Button1); }
         public Vector2 MousePosition { get; private set; }
         public Vector2 MouseDelta { get; private set; }

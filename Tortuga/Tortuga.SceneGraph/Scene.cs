@@ -1,16 +1,16 @@
-﻿using OpenSkies.Components;
-using OpenSkies.Graphics;
+﻿using Tortuga.Components;
+using Tortuga.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Primitives2D;
-using OpenSkies.SceneGraph;
-using OpenSkies.Drawing;
+using Tortuga.SceneGraph;
+using Tortuga.Drawing;
 using Veldrid;
 
-namespace OpenSkies.SceneGraph
+namespace Tortuga.SceneGraph
 {
     public class Scene
     {

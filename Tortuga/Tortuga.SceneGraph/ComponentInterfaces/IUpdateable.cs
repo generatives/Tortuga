@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Ultraviolet;
 
-namespace OpenSkies.SceneGraph.Components
+namespace Tortuga.SceneGraph.Components
 {
     interface IUpdateable
     {

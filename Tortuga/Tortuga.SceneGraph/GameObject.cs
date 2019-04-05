@@ -1,12 +1,12 @@
-﻿using OpenSkies.Drawing;
-using OpenSkies.SceneGraph.Components;
+﻿using Tortuga.Drawing;
+using Tortuga.SceneGraph.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OpenSkies.SceneGraph
+namespace Tortuga.SceneGraph
 {
     public partial class GameObject
     {

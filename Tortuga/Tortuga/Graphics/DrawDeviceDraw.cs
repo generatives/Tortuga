@@ -1,5 +1,5 @@
-﻿using OpenSkies.Drawing.Resources;
-using OpenSkies.Geometry;
+﻿using Tortuga.Drawing.Resources;
+using Tortuga.Geometry;
 using Tortuga.Graphics;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 using Veldrid;
 using System.Linq;
 
-namespace OpenSkies.Drawing
+namespace Tortuga.Drawing
 {
     public partial class DrawDevice
     {
@@ -30,6 +30,11 @@ namespace OpenSkies.Drawing
         public void Draw(SubTexture texture, RectangleF rect)
         {
             this.Add(GetResourceSet(texture.Texture), rect, texture.TexRect, RgbaFloat.White);
+        }
+
+        public void Draw(Texture texture, RectangleF uv, RectangleF rect, RgbaFloat color)
+        {
+            this.Add(GetResourceSet(texture), rect, uv, RgbaFloat.White);
         }
 
         public void Draw(Texture texture, IList<Vertex> vertices, Matrix3x2 transform)

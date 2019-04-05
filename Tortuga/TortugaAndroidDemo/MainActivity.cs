@@ -1,7 +1,7 @@
 ﻿using Android.App;
 using Android.Content.PM;
 using Android.OS;
-using OpenSkies.Drawing;
+using Tortuga.Drawing;
 using Tortuga.AndroidPlatform;
 using Tortuga.Audio;
 using Tortuga.Platform;

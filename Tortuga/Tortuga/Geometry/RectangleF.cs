@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 
-namespace OpenSkies.Geometry
+namespace Tortuga.Geometry
 {
     public struct RectangleF
     {

@@ -11,7 +11,7 @@ using Veldrid.SPIRV;
 using System.Linq;
 using Tortuga.Graphics;
 
-namespace OpenSkies.Drawing
+namespace Tortuga.Drawing
 {
     public partial class DrawDevice : IDisposable
     {
