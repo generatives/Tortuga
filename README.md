@@ -6,3 +6,5 @@ My goal with this project is to create a simple framework for game development a
 The project is in the very early stages and is completely undocumented. Currently it provides a draw batching system and audio playback for Windows and Android. It should work on Linux and OSX as well but has not been tested.
 
 The repository also contains the start of a Scene-GameObject-Component system. This has been set aside for now while the core functionality is developed.
+
+The font loader and rendering code is ported from https://github.com/cyotek/Cyotek.Drawing.BitmapFont

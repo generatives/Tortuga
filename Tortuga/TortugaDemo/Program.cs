@@ -12,6 +12,7 @@ using Tortuga.Platform;
 using SixLabors.ImageSharp;
 using Veldrid.ImageSharp;
 using Tortuga.Graphics.Text;
+using Cyotek.Drawing.BitmapFont;
 
 namespace OpenSkiesDemo
 {
@@ -29,14 +30,14 @@ namespace OpenSkiesDemo
         private Vector2 objectPosition;
         private IWindow _window;
         private double previousElapsed;
-        private Font font;
+        private BitmapFont font;
         private Stopwatch sw;
         private DrawDevice drawDevice;
         private Vertex[] triangleVertices = new Vertex[]
             {
-                new Vertex(new Vector2(0, 0), RgbaFloat.Orange, new Vector2(0, 0)),
-                new Vertex(new Vector2(10, 20), RgbaFloat.Blue, new Vector2(0.5f, 1)),
-                new Vertex(new Vector2(20, 0), RgbaFloat.Green, new Vector2(1, 0))
+                new Vertex(new Vector2(0, 0), RgbaFloat.White, new Vector2(0, 1)),
+                new Vertex(new Vector2(10, 20), RgbaFloat.White, new Vector2(0.5f, 0)),
+                new Vertex(new Vector2(20, 0), RgbaFloat.White, new Vector2(1, 1))
             };
 
         public void Run()
@@ -78,9 +79,8 @@ namespace OpenSkiesDemo
         {
             drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
 
-            var fontTexture = new ImageSharpTexture("Assets/testfont.png");
-            var fontDevTexture = fontTexture.CreateDeviceTexture(_window.GraphicsDevice, _window.GraphicsDevice.ResourceFactory);
-            font = new Font(fontDevTexture, 19, 19, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,;:?!-#\"'&()[]`\\/©@°+=*$<>%");
+            font = new BitmapFont();
+            font.Load("Assets/testfont.fnt", _window.GraphicsDevice);
         }
 
         public void Update()
@@ -144,7 +144,7 @@ namespace OpenSkiesDemo
             drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 0), -1);
             drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 100), -0.5f, RgbaFloat.Grey);
 
-            TextRenderer.DrawText(drawDevice, font, "Rendering Text!", new Vector2(-300, 30));
+            TextRenderer.DrawText(drawDevice, font, "Rendering Text!", new Vector2(-300, 30), new Vector2(5, 5));
             drawDevice.End();
         }
     }

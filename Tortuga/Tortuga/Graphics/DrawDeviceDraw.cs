@@ -32,8 +32,15 @@ namespace Tortuga.Drawing
             this.Add(GetResourceSet(texture.Texture), rect, texture.TexRect, RgbaFloat.White);
         }
 
-        public void Draw(Texture texture, RectangleF uv, RectangleF rect, RgbaFloat color)
+        public void Draw(Texture texture, Rectangle sourceRect, RectangleF rect, RgbaFloat color)
         {
+            var uv = new RectangleF()
+            {
+                X = (float)sourceRect.X / texture.Width,
+                Y = (float)sourceRect.Y / texture.Height,
+                Width = (float)sourceRect.Width / texture.Width,
+                Height = (float)sourceRect.Height / texture.Height,
+            };
             this.Add(GetResourceSet(texture), rect, uv, RgbaFloat.White);
         }
 
@@ -81,12 +88,12 @@ namespace Tortuga.Drawing
 
         private void Add(ResourceSet textureResourceSet, Vector2 size, RectangleF texRect, RgbaFloat color, Matrix3x2 transform)
         {
-            _rectBuffer[0] = new Vertex(new Vector2(0, 0), color, new Vector2(texRect.Left, texRect.Bottom));
-            _rectBuffer[1] = new Vertex(new Vector2(0, size.Y), color, new Vector2(texRect.Left, texRect.Top));
-            _rectBuffer[2] = new Vertex(new Vector2(size.X, 0), color, new Vector2(texRect.Right, texRect.Bottom));
-            _rectBuffer[3] = new Vertex(new Vector2(0, size.Y), color, new Vector2(texRect.Left, texRect.Top));
-            _rectBuffer[4] = new Vertex(new Vector2(size.X, size.Y), color, new Vector2(texRect.Right, texRect.Top));
-            _rectBuffer[5] = new Vertex(new Vector2(size.X, 0), color, new Vector2(texRect.Right, texRect.Bottom));
+            _rectBuffer[0] = new Vertex(new Vector2(0, 0), color, new Vector2(texRect.Left, texRect.Top));
+            _rectBuffer[1] = new Vertex(new Vector2(0, size.Y), color, new Vector2(texRect.Left, texRect.Bottom));
+            _rectBuffer[2] = new Vertex(new Vector2(size.X, 0), color, new Vector2(texRect.Right, texRect.Top));
+            _rectBuffer[3] = new Vertex(new Vector2(0, size.Y), color, new Vector2(texRect.Left, texRect.Bottom));
+            _rectBuffer[4] = new Vertex(new Vector2(size.X, size.Y), color, new Vector2(texRect.Right, texRect.Bottom));
+            _rectBuffer[5] = new Vertex(new Vector2(size.X, 0), color, new Vector2(texRect.Right, texRect.Top));
             Add(textureResourceSet, _rectBuffer, transform);
         }
 
