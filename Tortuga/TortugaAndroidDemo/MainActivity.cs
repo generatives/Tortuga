@@ -9,6 +9,7 @@ using System.Numerics;
 using System.Threading;
 using Veldrid;
 using System;
+using Tortuga.Geometry;
 
 namespace OpenSkiesAndroidDemo
 {
@@ -23,6 +24,12 @@ namespace OpenSkiesAndroidDemo
         private IWindow _window;
         private DrawDevice _drawDevice;
         private Vector2 objectPosition = Vector2.Zero;
+        private Vertex[] triangleVertices = new Vertex[]
+            {
+                new Vertex(new Vector2(0, 0), RgbaFloat.White, new Vector2(0, 1)),
+                new Vertex(new Vector2(10, 20), RgbaFloat.White, new Vector2(0.5f, 0)),
+                new Vertex(new Vector2(20, 0), RgbaFloat.White, new Vector2(1, 1))
+            };
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -52,7 +59,10 @@ namespace OpenSkiesAndroidDemo
 
         private void _window_Tick()
         {
-            if (_drawDevice == null) _drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
+            if (_drawDevice == null)
+            {
+                _drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
+            }
 
             //if (sound == null)
             //{
@@ -62,15 +72,10 @@ namespace OpenSkiesAndroidDemo
 
             rotation += 0.02f;
             _drawDevice.Begin(Matrix4x4.CreateScale(1f / _window.Width, 1f / _window.Height, 1f));
-            _drawDevice.Draw(_drawDevice.WhitePixel, new Vector2(200f, 500f), RgbaFloat.White, Matrix3x2.CreateRotation(rotation));
-            //drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X - 50f, objectPosition.Y, 30f, 30f), RgbaFloat.Red);
-            //drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X + 50f, objectPosition.Y, 30f, 30f));
-            //drawDevice.Draw(drawDevice.Grid, triangleVertices);
-            //drawDevice.Draw(drawDevice.WhitePixel, triangleVertices, Matrix3x2.CreateRotation(1) * Matrix3x2.CreateTranslation(new Vector2(-50, -50)));
-            //drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), Matrix3x2.CreateTranslation(50, 0));
-            //drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), RgbaFloat.CornflowerBlue, Matrix3x2.CreateTranslation(100, 0));
-            //drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 0), -1);
-            //drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 100), -0.5f, RgbaFloat.Grey);
+            _drawDevice.Add(_drawDevice.Grid, triangleVertices);
+            _drawDevice.Add(_drawDevice.Grid, triangleVertices, Matrix3x2.CreateRotation(0.5f) * Matrix3x2.CreateTranslation(new Vector2(50, 50)));
+            _drawDevice.Add(_drawDevice.Grid, RectangleF.Square(1), new RectangleF(-50, 0, 30f, 30f), RgbaFloat.CornflowerBlue);
+            _drawDevice.Add(_drawDevice.Grid, RectangleF.Square(1), new Vector2(30f, 30f), Matrix3x2.CreateTranslation(100, 0), RgbaFloat.CornflowerBlue);
             _drawDevice.End();
         }
 

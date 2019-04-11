@@ -137,9 +137,8 @@ namespace OpenSkiesDemo
 
             drawDevice.Begin(Matrix4x4.CreateScale(1f / _window.Width, 1f / _window.Height, 1f));
             drawDevice.Add(drawDevice.Grid, triangleVertices);
-            drawDevice.Add(drawDevice.Grid, triangleVertices, Matrix3x2.CreateRotation(0) * Matrix3x2.CreateTranslation(new Vector2(50, 50)));
-            drawDevice.Add(drawDevice.WhitePixel, triangleVertices, Matrix3x2.CreateRotation(1) * Matrix3x2.CreateTranslation(new Vector2(-50, -50)));
-            drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new RectangleF(0, 0, 30f, 30f), RgbaFloat.CornflowerBlue);
+            drawDevice.Add(drawDevice.Grid, triangleVertices, Matrix3x2.CreateRotation(0.5f) * Matrix3x2.CreateTranslation(new Vector2(50, 50)));
+            drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new RectangleF(-50, 0, 30f, 30f), RgbaFloat.CornflowerBlue);
             drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new Vector2(30f, 30f), Matrix3x2.CreateTranslation(100, 0), RgbaFloat.CornflowerBlue);
 
             textRenderer.DrawText("Rendering Text!", new Vector2(-300, 30), new Vector2(5, 5));
