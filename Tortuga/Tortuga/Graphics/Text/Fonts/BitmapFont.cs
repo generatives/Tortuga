@@ -278,7 +278,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// illegal values.</exception>
     /// <exception cref="InvalidDataException">Thrown when an Invalid Data error condition occurs.</exception>
     /// <param name="stream">The stream to load.</param>
-    public virtual void Load(Stream stream, GraphicsDevice gd)
+    public virtual void Load(Stream stream)
     {
       byte[] buffer;
       string header;
@@ -303,10 +303,10 @@ namespace Cyotek.Drawing.BitmapFont
       switch (header)
       {
         case "info ":
-          this.LoadText(stream, gd);
+          this.LoadText(stream);
           break;
         case "<?xml":
-          this.LoadXml(stream, gd);
+          this.LoadXml(stream);
           break;
         default:
           throw new InvalidDataException("Unknown file format.");
@@ -319,7 +319,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
     /// <exception cref="FileNotFoundException">Thrown when the requested file is not present.</exception>
     /// <param name="fileName">The file name to load.</param>
-    public void Load(string fileName, GraphicsDevice gd)
+    public void Load(string fileName)
     {
       if (string.IsNullOrEmpty(fileName))
       {
@@ -333,7 +333,7 @@ namespace Cyotek.Drawing.BitmapFont
 
       using (Stream stream = File.OpenRead(fileName))
       {
-        this.Load(stream, gd);
+        this.Load(stream);
       }
 
       BitmapFontLoader.QualifyResourcePaths(this, Path.GetDirectoryName(fileName));
@@ -344,11 +344,11 @@ namespace Cyotek.Drawing.BitmapFont
     /// </summary>
     /// <param name="text">String containing the font to load.</param>
     /// <remarks>The source data must be in BMFont text format.</remarks>
-    public void LoadText(string text, GraphicsDevice gd)
+    public void LoadText(string text)
     {
       using (StringReader reader = new StringReader(text))
       {
-        this.LoadText(reader, gd);
+        this.LoadText(reader);
       }
     }
 
@@ -360,7 +360,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
     /// <param name="stream">The stream containing the font to load.</param>
-    public void LoadText(Stream stream, GraphicsDevice gd)
+    public void LoadText(Stream stream)
     {
       if (stream == null)
       {
@@ -369,7 +369,7 @@ namespace Cyotek.Drawing.BitmapFont
 
       using (TextReader reader = new StreamReader(stream))
       {
-        this.LoadText(reader, gd);
+        this.LoadText(reader);
       }
     }
 
@@ -381,7 +381,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
     /// <param name="reader">The <strong>TextReader</strong> used to feed the data into the font.</param>
-    public virtual void LoadText(TextReader reader, GraphicsDevice gd)
+    public virtual void LoadText(TextReader reader)
     {
       IDictionary<int, Page> pageData;
       IDictionary<Kerning, int> kerningDictionary;
@@ -443,7 +443,7 @@ namespace Cyotek.Drawing.BitmapFont
                 id = BitmapFontLoader.GetNamedInt(parts, "id");
                 name = BitmapFontLoader.GetNamedString(parts, "file");
 
-                pageData.Add(id, new Page(id, name, gd));
+                pageData.Add(id, new Page(id, name));
                 break;
               case "char":
                 Character charData;
@@ -452,10 +452,10 @@ namespace Cyotek.Drawing.BitmapFont
                            {
                              Char = (char)BitmapFontLoader.GetNamedInt(parts, "id"),
                              Bounds =
-                               new Rectangle(BitmapFontLoader.GetNamedInt(parts, "x"),
-                                             BitmapFontLoader.GetNamedInt(parts, "y"),
-                                             BitmapFontLoader.GetNamedInt(parts, "width"),
-                                             BitmapFontLoader.GetNamedInt(parts, "height")),
+                               new RectangleF(BitmapFontLoader.GetNamedInt(parts, "x"),
+                                              BitmapFontLoader.GetNamedInt(parts, "y"),
+                                              BitmapFontLoader.GetNamedInt(parts, "width"),
+                                              BitmapFontLoader.GetNamedInt(parts, "height")),
                              Offset =
                                new Vector2i(BitmapFontLoader.GetNamedInt(parts, "xoffset"),
                                          BitmapFontLoader.GetNamedInt(parts, "yoffset")),
@@ -492,11 +492,11 @@ namespace Cyotek.Drawing.BitmapFont
     /// </summary>
     /// <param name="xml">String containing the font to load.</param>
     /// <remarks>The source data must be in BMFont XML format.</remarks>
-    public void LoadXml(string xml, GraphicsDevice gd)
+    public void LoadXml(string xml)
     {
       using (StringReader reader = new StringReader(xml))
       {
-        this.LoadXml(reader, gd);
+        this.LoadXml(reader);
       }
     }
 
@@ -508,7 +508,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
     /// <param name="reader">The <strong>TextReader</strong> used to feed the data into the font.</param>
-    public virtual void LoadXml(TextReader reader, GraphicsDevice gd)
+    public virtual void LoadXml(TextReader reader)
     {
       XmlDocument document;
       IDictionary<int, Page> pageData;
@@ -560,7 +560,7 @@ namespace Cyotek.Drawing.BitmapFont
       // load texture information
       foreach (XmlNode node in root.SelectNodes("pages/page"))
       {
-        Page page = new Page(Convert.ToInt32(node.Attributes["id"].Value), node.Attributes["file"].Value, gd);
+        Page page = new Page(Convert.ToInt32(node.Attributes["id"].Value), node.Attributes["file"].Value);
 
         pageData.Add(page.Id, page);
       }
@@ -573,10 +573,10 @@ namespace Cyotek.Drawing.BitmapFont
 
         character = new Character();
         character.Char = (char)Convert.ToInt32(node.Attributes["id"].Value);
-        character.Bounds = new Rectangle(Convert.ToInt32(node.Attributes["x"].Value),
-                                         Convert.ToInt32(node.Attributes["y"].Value),
-                                         Convert.ToInt32(node.Attributes["width"].Value),
-                                         Convert.ToInt32(node.Attributes["height"].Value));
+        character.Bounds = new RectangleF(Convert.ToInt32(node.Attributes["x"].Value),
+                                          Convert.ToInt32(node.Attributes["y"].Value),
+                                          Convert.ToInt32(node.Attributes["width"].Value),
+                                          Convert.ToInt32(node.Attributes["height"].Value));
         character.Offset = new Vector2i(Convert.ToInt32(node.Attributes["xoffset"].Value),
                                      Convert.ToInt32(node.Attributes["yoffset"].Value));
         character.XAdvance = Convert.ToInt32(node.Attributes["xadvance"].Value);
@@ -612,7 +612,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// </remarks>
     /// <exception cref="ArgumentNullException">Thrown when one or more required arguments are null.</exception>
     /// <param name="stream">The stream containing the font to load.</param>
-    public void LoadXml(Stream stream, GraphicsDevice gd)
+    public void LoadXml(Stream stream)
     {
       if (stream == null)
       {
@@ -621,7 +621,7 @@ namespace Cyotek.Drawing.BitmapFont
 
       using (TextReader reader = new StreamReader(stream))
       {
-        this.LoadXml(reader, gd);
+        this.LoadXml(reader);
       }
     }
 
@@ -701,7 +701,7 @@ namespace Cyotek.Drawing.BitmapFont
             }
 
             currentLineWidth += width;
-            currentLineHeight = Math.Max(currentLineHeight, data.Bounds.Height + data.Offset.Y);
+            currentLineHeight = Math.Max(currentLineHeight, (int)data.Bounds.Height + data.Offset.Y);
             previousCharacter = character;
           }
         }

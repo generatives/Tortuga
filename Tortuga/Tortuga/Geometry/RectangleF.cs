@@ -32,5 +32,10 @@ namespace Tortuga.Geometry
             Width = width;
             Height = height;
         }
+
+        public static RectangleF Square(float size)
+        {
+            return new RectangleF(0, 0, size, size);
+        }
     }
 }

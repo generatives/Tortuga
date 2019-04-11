@@ -10,23 +10,39 @@ using Veldrid.ImageSharp;
 using Veldrid.SPIRV;
 using System.Linq;
 using Tortuga.Graphics;
+using Tortuga.Geometry;
+using Tortuga.Graphics.Resources;
 
 namespace Tortuga.Drawing
 {
-    public partial class DrawDevice : IDisposable
+    public class DrawDevice : IDisposable
     {
         public GraphicsDevice GraphicsDevice { get; private set; }
         private Swapchain _swapchain;
         private CommandList _commandList;
         private Pipeline _pipeline;
+
         private ResourceLayout _textureLayout;
+        private DeviceBuffer _textureSizeBuffer;
+
         private ResourceSet _cameraResourceSet;
         private ResourceFactory _factory;
 
         private DeviceBuffer _transfromBuffer;
 
-        public Texture WhitePixel { get; private set; }
-        public Texture Grid { get; private set; }
+        private List<Surface> _surfaces;
+
+        public Surface WhitePixel { get; private set; }
+        public Surface Grid { get; private set; }
+
+        private List<Batch> _batches;
+
+        private Vertex[] _vertexArray;
+        private DeviceBuffer _vertexBuffer;
+
+        private Vertex[] _rectBuffer = new Vertex[6];
+
+        private uint _length;
 
         #region Shaders
         private const string VertexCode = @"
@@ -54,17 +70,21 @@ layout(location = 1) in vec2 fsin_texCoords;
 layout(location = 0) out vec4 fsout_color;
 layout(set = 1, binding = 0) uniform texture2D SurfaceTexture;
 layout(set = 1, binding = 1) uniform sampler SurfaceSampler;
+layout(set = 1, binding = 2) uniform TextureSizeBuffer
+{
+    vec2 TextureSize;
+};
 void main()
 {
-    fsout_color =  texture(sampler2D(SurfaceTexture, SurfaceSampler), fsin_texCoords) * fsin_Color;
+    vec2 fraction_texCoords = vec2(fsin_texCoords.x / TextureSize.x, fsin_texCoords.y / TextureSize.y);
+    fsout_color =  texture(sampler2D(SurfaceTexture, SurfaceSampler), fraction_texCoords) * fsin_Color;
 }";
         #endregion
 
         public DrawDevice(GraphicsDevice graphics, Swapchain swapchain)
         {
             _batches = new List<Batch>();
-            _resourceSets = new Dictionary<Texture, ResourceSet>();
-
+            _surfaces = new List<Surface>();
             GraphicsDevice = graphics;
             _swapchain = swapchain;
             _factory = GraphicsDevice.ResourceFactory;
@@ -96,15 +116,21 @@ void main()
                 new ResourceSetDescription(cameraLayout, _transfromBuffer));
 
             var textureDesc = new ResourceLayoutElementDescription(
-                "tex",
+                "SurfaceTexture",
                 ResourceKind.TextureReadOnly,
                 ShaderStages.Fragment);
             var samplerDesc = new ResourceLayoutElementDescription(
-                "s",
+                "SurfaceSampler",
                 ResourceKind.Sampler,
                 ShaderStages.Fragment);
+            var textureSizeDesc = new ResourceLayoutElementDescription(
+                "TextureSizeBuffer",
+                ResourceKind.UniformBuffer,
+                ShaderStages.Fragment);
 
-            var textureRLD = new ResourceLayoutDescription(textureDesc, samplerDesc);
+            _textureSizeBuffer = _factory.CreateBuffer(new BufferDescription(16, BufferUsage.UniformBuffer));
+
+            var textureRLD = new ResourceLayoutDescription(textureDesc, samplerDesc, textureSizeDesc);
             _textureLayout = _factory.CreateResourceLayout(textureRLD);
             _textureLayout.Name = "Texture Resource Layout";
 
@@ -132,7 +158,8 @@ void main()
             Image<Rgba32> whitePixel = new Image<Rgba32>(1, 1);
             whitePixel[0, 0] = Rgba32.White;
             var whitePixelTex = new ImageSharpTexture(whitePixel, false);
-            WhitePixel = whitePixelTex.CreateDeviceTexture(GraphicsDevice, _factory);
+            var whitePixelDevTex = whitePixelTex.CreateDeviceTexture(GraphicsDevice, _factory);
+            WhitePixel = CreateSurface(whitePixelDevTex);
 
             Image<Rgba32> gridImage = new Image<Rgba32>(3, 3);
             gridImage[0, 0] = Rgba32.White;
@@ -147,15 +174,25 @@ void main()
             gridImage[1, 2] = Rgba32.Blue;
             gridImage[2, 2] = Rgba32.White;
             var gridTex = new ImageSharpTexture(gridImage, false);
-            Grid = gridTex.CreateDeviceTexture(GraphicsDevice, _factory);
+            var gridDevTex = gridTex.CreateDeviceTexture(GraphicsDevice, _factory);
+            Grid = CreateSurface(gridDevTex);
         }
 
-        private ResourceSet CreateResourceSet(Texture texture)
+        public Surface CreateSurface(Texture texture)
         {
             var factory = GraphicsDevice.ResourceFactory;
-            var _textureView = factory.CreateTextureView(new TextureViewDescription(texture));
-            return factory.CreateResourceSet(
-                new ResourceSetDescription(_textureLayout, _textureView, GraphicsDevice.PointSampler));
+            var textureView = factory.CreateTextureView(new TextureViewDescription(texture));
+            var resourceSet = factory.CreateResourceSet(
+                new ResourceSetDescription(_textureLayout, textureView, GraphicsDevice.PointSampler, _textureSizeBuffer));
+            var material = new Surface(resourceSet, texture.Width, texture.Height);
+            _surfaces.Add(material);
+            return material;
+        }
+
+        public void DestroySurface(Surface surface)
+        {
+            surface.DisposeResources();
+            _surfaces.Remove(surface);
         }
 
         public void Begin(Matrix4x4 transform)
@@ -185,37 +222,132 @@ void main()
             GraphicsDevice.WaitForIdle();
         }
 
-        private ResourceSet GetResourceSet(Texture texture)
+        private void DrawBatches()
         {
-            ResourceSet resourceSet;
-            if (!_resourceSets.ContainsKey(texture))
+            GraphicsDevice.UpdateBuffer(_vertexBuffer, (uint)0, ref _vertexArray[0], (uint)(Vertex.SizeInBytes * _length));
+            _commandList.SetVertexBuffer(0, _vertexBuffer);
+
+            uint offset = 0;
+            foreach (var batch in _batches)
             {
-                resourceSet = CreateResourceSet(texture);
-                _resourceSets[texture] = resourceSet;
+                GraphicsDevice.UpdateBuffer(_textureSizeBuffer, 0, new Vector2(batch.Surface.Width, batch.Surface.Height));
+                _commandList.SetGraphicsResourceSet(1, batch.Surface.TextureResourceSet);
+                _commandList.Draw(batch.NumVertices, 1, offset, 0);
+                offset += batch.NumVertices;
+            }
+
+            _batches.Clear();
+            _length = 0;
+        }
+
+        public void Add(Surface surface, RectangleF texRect, RectangleF rect, RgbaFloat color)
+        {
+            EnsureAdditionalSize(6);
+            _vertexArray[_length] = new Vertex(new Vector2(rect.Left, rect.Top), color, new Vector2(texRect.Left, texRect.Bottom));
+            _vertexArray[_length + 1] = new Vertex(new Vector2(rect.Right, rect.Top), color, new Vector2(texRect.Right, texRect.Bottom));
+            _vertexArray[_length + 2] = new Vertex(new Vector2(rect.Left, rect.Bottom), color, new Vector2(texRect.Left, texRect.Top));
+            _vertexArray[_length + 3] = new Vertex(new Vector2(rect.Left, rect.Bottom), color, new Vector2(texRect.Left, texRect.Top));
+            _vertexArray[_length + 4] = new Vertex(new Vector2(rect.Right, rect.Top), color, new Vector2(texRect.Right, texRect.Bottom));
+            _vertexArray[_length + 5] = new Vertex(new Vector2(rect.Right, rect.Bottom), color, new Vector2(texRect.Right, texRect.Top));
+            AddBatch(surface, 6);
+        }
+
+        public void Add(Surface surface, RectangleF texRect, Vector2 size, Matrix3x2 transform, RgbaFloat color)
+        {
+            EnsureAdditionalSize(6);
+            _vertexArray[_length] = new Vertex(Vector2.Transform(new Vector2(0, 0), transform), color, new Vector2(texRect.Left, texRect.Top));
+            _vertexArray[_length + 1] = new Vertex(Vector2.Transform(new Vector2(0, size.Y), transform), color, new Vector2(texRect.Left, texRect.Bottom));
+            _vertexArray[_length + 2] = new Vertex(Vector2.Transform(new Vector2(size.X, 0), transform), color, new Vector2(texRect.Right, texRect.Top));
+            _vertexArray[_length + 3] = new Vertex(Vector2.Transform(new Vector2(0, size.Y), transform), color, new Vector2(texRect.Left, texRect.Bottom));
+            _vertexArray[_length + 4] = new Vertex(Vector2.Transform(new Vector2(size.X, size.Y), transform), color, new Vector2(texRect.Right, texRect.Bottom));
+            _vertexArray[_length + 5] = new Vertex(Vector2.Transform(new Vector2(size.X, 0), transform), color, new Vector2(texRect.Right, texRect.Top));
+            AddBatch(surface, 6);
+        }
+
+        public void Add(Surface surface, IList<Vertex> vertices)
+        {
+            EnsureAdditionalSize((uint)vertices.Count);
+            vertices.CopyTo(_vertexArray, (int)_length);
+            AddBatch(surface, (uint)vertices.Count);
+        }
+
+        public void Add(Surface surface, IList<Vertex> vertices, Matrix3x2 transform)
+        {
+            EnsureAdditionalSize((uint)vertices.Count);
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                _vertexArray[_length + i] = new Vertex()
+                {
+                    Position = Vector2.Transform(vertices[i].Position, transform),
+                    Color = vertices[i].Color,
+                    UV = vertices[i].UV
+                };
+            }
+            AddBatch(surface, (uint)vertices.Count);
+        }
+
+        private void AddBatch(Surface surface, uint numVertices)
+        {
+            var lastBatch = _batches.LastOrDefault();
+            if (lastBatch.Surface != null && lastBatch.Surface == surface)
+            {
+                lastBatch.NumVertices += numVertices;
+                _batches[_batches.Count - 1] = lastBatch;
             }
             else
             {
-                resourceSet = _resourceSets[texture];
+                _batches.Add(new Batch()
+                {
+                    Surface = surface,
+                    NumVertices = numVertices
+                });
             }
-
-            return resourceSet;
+            _length += numVertices;
         }
 
-        public Texture LoadTexture(string path)
+        private void EnsureAdditionalSize(uint size)
         {
-            var source = new ImageSharpTexture(path);
-            return source.CreateDeviceTexture(GraphicsDevice, _factory);
+            EnsureSize(_length + size);
+        }
+
+        private void EnsureSize(uint size)
+        {
+            if (_vertexArray == null || size > _vertexArray.Length)
+            {
+                var array = new Vertex[size * 2];
+                if (_vertexArray != null)
+                {
+                    _vertexArray.CopyTo(array, 0);
+                }
+                _vertexArray = array;
+                SetBuffer(_vertexArray.Length);
+            }
+        }
+
+        private void SetBuffer(int size)
+        {
+            if (_vertexBuffer != null)
+            {
+                _vertexBuffer.Dispose();
+            }
+            var factory = GraphicsDevice.ResourceFactory;
+            BufferDescription vbDescription = new BufferDescription(
+                (uint)size * Vertex.SizeInBytes,
+                BufferUsage.VertexBuffer);
+            _vertexBuffer = factory.CreateBuffer(vbDescription);
         }
 
         public void Dispose()
         {
-            foreach (var SpriteBatch in _resourceSets.Values)
+            foreach(var material in _surfaces)
             {
-                SpriteBatch.Dispose();
+                material.DisposeResources();
             }
-            WhitePixel.Dispose();
+            _surfaces.Clear();
+            _cameraResourceSet.Dispose();
             _transfromBuffer.Dispose();
             _textureLayout.Dispose();
+            _pipeline.Dispose();
             _commandList.Dispose();
             GraphicsDevice.Dispose();
         }

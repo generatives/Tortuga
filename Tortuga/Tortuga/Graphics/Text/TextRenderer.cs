@@ -5,27 +5,47 @@ using System.Numerics;
 using System.Text;
 using Tortuga.Drawing;
 using Tortuga.Geometry;
+using Tortuga.Graphics.Resources;
 using Veldrid;
+using Veldrid.ImageSharp;
 
 namespace Tortuga.Graphics.Text
 {
     public class TextRenderer
     {
-        public static void DrawText(DrawDevice device, BitmapFont font, string text, Vector2 position)
+        private BitmapFont _font;
+        private DrawDevice _device;
+        private Surface[] _pageSurfaces;
+
+        public TextRenderer(BitmapFont font, DrawDevice device)
         {
-            DrawText(device, font, text, position, Vector2.One);
+            _font = font;
+            _device = device;
+            _pageSurfaces = new Surface[_font.Pages.Length];
+            for(var i = 0; i < _font.Pages.Length; i++)
+            {
+                var page = _font.Pages[i];
+                var ist = new ImageSharpTexture(page.FileName);
+                var texture = ist.CreateDeviceTexture(_device.GraphicsDevice, _device.GraphicsDevice.ResourceFactory);
+                _pageSurfaces[i] = _device.CreateSurface(texture);
+            }
         }
-        public static void DrawText(DrawDevice device, BitmapFont font, string text, Vector2 position, Vector2 scale)
+
+        public void DrawText(string text, Vector2 position)
+        {
+            DrawText(text, position, Vector2.One);
+        }
+        public void DrawText(string text, Vector2 position, Vector2 scale)
         {
             char previousCharacter = ' ';
-            var size = font.MeasureFont(text);
+            var size = _font.MeasureFont(text);
 
             foreach (char character in text)
             {
                 switch (character)
                 {
                     case '\n':
-                        position = new Vector2(0, font.LineHeight);
+                        position = new Vector2(0, _font.LineHeight);
                         break;
                     case '\r':
                         break;
@@ -33,10 +53,10 @@ namespace Tortuga.Graphics.Text
                         Character data;
                         int kerning;
 
-                        data = font[character];
-                        kerning = font.GetKerning(previousCharacter, character);
+                        data = _font[character];
+                        kerning = _font.GetKerning(previousCharacter, character);
 
-                        DrawCharacter(device, font, data, position.X + data.Offset.X + kerning, position.Y + data.Offset.Y);
+                        DrawCharacter(data, position.X + data.Offset.X + kerning, position.Y + data.Offset.Y);
 
                         position += new Vector2(data.XAdvance + kerning, 0);
                         break;
@@ -46,10 +66,10 @@ namespace Tortuga.Graphics.Text
             }
         }
 
-        private static void DrawCharacter(DrawDevice device, BitmapFont font, Character character, float x, float y)
+        private void DrawCharacter(Character character, float x, float y)
         {
-            var texture = font.Pages[character.TexturePage].Texture;
-            device.Draw(texture, character.Bounds, new RectangleF(x, y, character.Bounds.Width, character.Bounds.Height), RgbaFloat.White);
+            var surface = _pageSurfaces[character.TexturePage];
+            _device.Add(surface, character.Bounds, new RectangleF(x, y, character.Bounds.Width, character.Bounds.Height), RgbaFloat.White);
         }
     }
 }

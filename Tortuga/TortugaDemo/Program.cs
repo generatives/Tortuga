@@ -31,6 +31,7 @@ namespace OpenSkiesDemo
         private IWindow _window;
         private double previousElapsed;
         private BitmapFont font;
+        private TextRenderer textRenderer;
         private Stopwatch sw;
         private DrawDevice drawDevice;
         private Vertex[] triangleVertices = new Vertex[]
@@ -80,7 +81,8 @@ namespace OpenSkiesDemo
             drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
 
             font = new BitmapFont();
-            font.Load("Assets/testfont.fnt", _window.GraphicsDevice);
+            font.Load("Assets/testfont.fnt");
+            textRenderer = new TextRenderer(font, drawDevice);
         }
 
         public void Update()
@@ -134,17 +136,13 @@ namespace OpenSkiesDemo
 
 
             drawDevice.Begin(Matrix4x4.CreateScale(1f / _window.Width, 1f / _window.Height, 1f));
-            drawDevice.Draw(drawDevice.WhitePixel, new RectangleF(objectPosition.X - 15f, objectPosition.Y - 15f, 30f, 30f), RgbaFloat.White);
-            drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X - 50f, objectPosition.Y, 30f, 30f), RgbaFloat.Red);
-            drawDevice.Draw(drawDevice.Grid, new RectangleF(objectPosition.X + 50f, objectPosition.Y, 30f, 30f));
-            drawDevice.Draw(drawDevice.Grid, triangleVertices);
-            drawDevice.Draw(drawDevice.WhitePixel, triangleVertices, Matrix3x2.CreateRotation(1) * Matrix3x2.CreateTranslation(new Vector2(-50, -50)));
-            drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), Matrix3x2.CreateTranslation(50, 0));
-            drawDevice.Draw(drawDevice.Grid, new Vector2(30f, 30f), RgbaFloat.CornflowerBlue, Matrix3x2.CreateTranslation(100, 0));
-            drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 0), -1);
-            drawDevice.Draw(drawDevice.WhitePixel, new Vector2(40f, 40f), new Vector2(-100, 100), -0.5f, RgbaFloat.Grey);
+            drawDevice.Add(drawDevice.Grid, triangleVertices);
+            drawDevice.Add(drawDevice.Grid, triangleVertices, Matrix3x2.CreateRotation(0) * Matrix3x2.CreateTranslation(new Vector2(50, 50)));
+            drawDevice.Add(drawDevice.WhitePixel, triangleVertices, Matrix3x2.CreateRotation(1) * Matrix3x2.CreateTranslation(new Vector2(-50, -50)));
+            drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new RectangleF(0, 0, 30f, 30f), RgbaFloat.CornflowerBlue);
+            drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new Vector2(30f, 30f), Matrix3x2.CreateTranslation(100, 0), RgbaFloat.CornflowerBlue);
 
-            TextRenderer.DrawText(drawDevice, font, "Rendering Text!", new Vector2(-300, 30), new Vector2(5, 5));
+            textRenderer.DrawText("Rendering Text!", new Vector2(-300, 30), new Vector2(5, 5));
             drawDevice.End();
         }
     }

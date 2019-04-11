@@ -11,15 +11,12 @@ namespace Primitives2D
     /// </summary>
     public static class SpriteBatchExtensions
     {
-
-
         #region Private Members
 
         private static readonly Dictionary<String, List<Vector2>> circleCache = new Dictionary<string, List<Vector2>>();
         //private static readonly Dictionary<String, List<Vector2>> arcCache = new Dictionary<string, List<Vector2>>();
 
         #endregion
-
 
         #region Private Methods
         /// <summary>
@@ -117,7 +114,6 @@ namespace Primitives2D
 
         #endregion
 
-
         #region FillRectangle
 
         /// <summary>
@@ -129,7 +125,7 @@ namespace Primitives2D
         public static void FillRectangle(this DrawDevice drawDevice, RectangleF rect, RgbaFloat color)
         {
             // Simply use the function already there
-            drawDevice.Draw(drawDevice.WhitePixel, rect, color);
+            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), rect, color);
         }
 
 
@@ -142,7 +138,7 @@ namespace Primitives2D
         /// <param name="angle">The angle in radians to draw the rectangle at</param>
         public static void FillRectangle(this DrawDevice drawDevice, RectangleF rect, RgbaFloat color, float angle)
         {
-            drawDevice.Draw(drawDevice.WhitePixel, rect.Size, color, Matrix3x2.CreateTranslation(rect.Position) * Matrix3x2.CreateRotation(angle));
+            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), rect.Size, Matrix3x2.CreateTranslation(rect.Position) * Matrix3x2.CreateRotation(angle), color);
         }
 
 
@@ -169,7 +165,7 @@ namespace Primitives2D
         /// <param name="color">The RgbaFloat to draw the rectangle in</param>
         public static void FillRectangle(this DrawDevice drawDevice, Vector2 location, Vector2 size, RgbaFloat color, float angle)
         {
-            drawDevice.Draw(drawDevice.WhitePixel, size, color, Matrix3x2.CreateTranslation(location) * Matrix3x2.CreateRotation(angle));
+            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), size, Matrix3x2.CreateTranslation(location) * Matrix3x2.CreateRotation(angle), color);
         }
 
 
@@ -204,7 +200,6 @@ namespace Primitives2D
         }
 
         #endregion
-
 
         #region DrawRectangle
 
@@ -267,7 +262,6 @@ namespace Primitives2D
         }
 
         #endregion
-
 
         #region DrawLine
 
@@ -360,14 +354,13 @@ namespace Primitives2D
         /// <param name="thickness">The thickness of the line</param>
         public static void DrawLine(this DrawDevice drawDevice, Vector2 point, float length, float angle, RgbaFloat color, float thickness)
         {
-            drawDevice.Draw(drawDevice.WhitePixel,
+            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1),
                 new Vector2(length, thickness),
-                color,
-                Matrix3x2.CreateTranslation(0, -thickness / 2) * Matrix3x2.CreateRotation(angle) * Matrix3x2.CreateTranslation(point));
+                Matrix3x2.CreateTranslation(0, -thickness / 2) * Matrix3x2.CreateRotation(angle) * Matrix3x2.CreateTranslation(point),
+                color);
         }
 
         #endregion
-
 
         #region PutPixel
 
@@ -379,11 +372,10 @@ namespace Primitives2D
 
         public static void PutPixel(this DrawDevice drawDevice, Vector2 position, RgbaFloat color)
         {
-            drawDevice.Draw(drawDevice.WhitePixel, new RectangleF(position.X, position.Y, 1, 1), color);
+            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), new RectangleF(position.X, position.Y, 1, 1), color);
         }
 
         #endregion
-
 
         #region DrawCircle
 
@@ -448,7 +440,6 @@ namespace Primitives2D
 
         #endregion
 
-
         #region DrawArc
 
         /// <summary>
@@ -486,7 +477,5 @@ namespace Primitives2D
         }
 
         #endregion
-
-
     }
 }

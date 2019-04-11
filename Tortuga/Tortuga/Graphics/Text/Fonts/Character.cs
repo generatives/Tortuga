@@ -24,7 +24,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// <value>
     /// The bounds of the character image in the source texture.
     /// </value>
-    public Rectangle Bounds { get; set; }
+    public RectangleF Bounds { get; set; }
 
     /// <summary>
     /// Gets or sets the texture channel where the character image is found.

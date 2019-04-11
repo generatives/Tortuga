@@ -12,65 +12,60 @@ using Veldrid.ImageSharp;
 
 namespace Cyotek.Drawing.BitmapFont
 {
-  /// <summary>
-  /// Represents a texture page.
-  /// </summary>
-  public class Page
-  {
-    #region Constructors
-
     /// <summary>
-    /// Creates a texture page using the specified ID and source file name.
+    /// Represents a texture page.
     /// </summary>
-    /// <param name="id">The identifier.</param>
-    /// <param name="fileName">Filename of the texture image.</param>
-    public Page(int id, string fileName, GraphicsDevice gd)
+    public class Page
     {
-      this.FileName = fileName;
-      this.Id = id;
+        #region Constructors
 
-            var fontTexture = new ImageSharpTexture("Assets/" + fileName);
-            Texture = fontTexture.CreateDeviceTexture(gd, gd.ResourceFactory);
+        /// <summary>
+        /// Creates a texture page using the specified ID and source file name.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <param name="fileName">Filename of the texture image.</param>
+        public Page(int id, string fileName)
+        {
+            this.FileName = fileName;
+            this.Id = id;
         }
 
-    #endregion
+        #endregion
 
-    #region Properties
+        #region Properties
 
-    /// <summary>
-    /// Gets or sets the filename of the source texture image.
-    /// </summary>
-    /// <value>
-    /// The name of the file containing the source texture image.
-    /// </value>
-    public string FileName { get; set; }
+        /// <summary>
+        /// Gets or sets the filename of the source texture image.
+        /// </summary>
+        /// <value>
+        /// The name of the file containing the source texture image.
+        /// </value>
+        public string FileName { get; set; }
 
-    /// <summary>
-    /// Gets or sets the page identifier.
-    /// </summary>
-    /// <value>
-    /// The page identifier.
-    /// </value>
-    public int Id { get; set; }
+        /// <summary>
+        /// Gets or sets the page identifier.
+        /// </summary>
+        /// <value>
+        /// The page identifier.
+        /// </value>
+        public int Id { get; set; }
 
-    public Texture Texture { get; private set; }
+        #endregion
 
-    #endregion
+        #region Methods
 
-    #region Methods
+        /// <summary>
+        /// Returns the fully qualified type name of this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.String" /> containing a fully qualified type name.
+        /// </returns>
+        /// <seealso cref="M:System.ValueType.ToString()"/>
+        public override string ToString()
+        {
+            return string.Format("{0} ({1})", this.Id, Path.GetFileName(this.FileName));
+        }
 
-    /// <summary>
-    /// Returns the fully qualified type name of this instance.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="T:System.String" /> containing a fully qualified type name.
-    /// </returns>
-    /// <seealso cref="M:System.ValueType.ToString()"/>
-    public override string ToString()
-    {
-      return string.Format("{0} ({1})", this.Id, Path.GetFileName(this.FileName));
+        #endregion
     }
-
-    #endregion
-  }
 }

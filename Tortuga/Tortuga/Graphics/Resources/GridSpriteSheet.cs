@@ -1,8 +1,8 @@
-﻿using Tortuga.Drawing.Resources;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using Veldrid;
+using Tortuga.Geometry;
 
 namespace Tortuga.Graphics.Resources
 {
@@ -14,7 +14,7 @@ namespace Tortuga.Graphics.Resources
         public int NumColumns { get; private set; }
         public int NumRows { get; private set; }
 
-        public SubTexture this[int index]
+        public Rectangle this[int index]
         {
             get
             {
@@ -25,18 +25,17 @@ namespace Tortuga.Graphics.Resources
             }
         }
 
-        public SubTexture this[int x, int y]
+        public Rectangle this[int x, int y]
         {
             get
             {
-                return new SubTexture(Texture,
-                    new Geometry.Rectangle()
-                    {
-                        X = ColumnWidth * x,
-                        Y = RowHeight * y,
-                        Width = ColumnWidth,
-                        Height = RowHeight
-                    });
+                return new Rectangle()
+                {
+                    X = ColumnWidth * x,
+                    Y = RowHeight * y,
+                    Width = ColumnWidth,
+                    Height = RowHeight
+                };
             }
         }
 

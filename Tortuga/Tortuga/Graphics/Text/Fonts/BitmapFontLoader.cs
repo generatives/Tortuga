@@ -31,7 +31,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns>
     /// A <see cref="BitmapFont"/> containing the loaded data.
     /// </returns>
-    public static BitmapFont LoadFontFromFile(string fileName, GraphicsDevice gd)
+    public static BitmapFont LoadFontFromFile(string fileName)
     {
       BitmapFont result;
 
@@ -55,11 +55,11 @@ namespace Cyotek.Drawing.BitmapFont
 
           if (line.StartsWith("info "))
           {
-            result = LoadFontFromTextFile(fileName, gd);
+            result = LoadFontFromTextFile(fileName);
           }
           else if (line.StartsWith("<?xml"))
           {
-            result = LoadFontFromXmlFile(fileName, gd);
+            result = LoadFontFromXmlFile(fileName);
           }
           else
           {
@@ -80,7 +80,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns>
     /// A <see cref="BitmapFont"/> containing the loaded data.
     /// </returns>
-    public static BitmapFont LoadFontFromTextFile(string fileName, GraphicsDevice gd)
+    public static BitmapFont LoadFontFromTextFile(string fileName)
     {
       BitmapFont font;
 
@@ -98,7 +98,7 @@ namespace Cyotek.Drawing.BitmapFont
 
       using (Stream stream = File.OpenRead(fileName))
       {
-        font.LoadText(stream, gd);
+        font.LoadText(stream);
       }
 
       QualifyResourcePaths(font, Path.GetDirectoryName(fileName));
@@ -115,7 +115,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns>
     /// A <see cref="BitmapFont"/> containing the loaded data.
     /// </returns>
-    public static BitmapFont LoadFontFromXmlFile(string fileName, GraphicsDevice gd)
+    public static BitmapFont LoadFontFromXmlFile(string fileName)
     {
       BitmapFont font;
 
@@ -133,7 +133,7 @@ namespace Cyotek.Drawing.BitmapFont
 
       using (Stream stream = File.OpenRead(fileName))
       {
-        font.LoadXml(stream, gd);
+        font.LoadXml(stream);
       }
 
       QualifyResourcePaths(font, Path.GetDirectoryName(fileName));
