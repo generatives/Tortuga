@@ -45,7 +45,7 @@ namespace Tortuga.DesktopPlatform
             {
                 Window = VeldridStartup.CreateWindow(ref _windowCreateInfo);
                 Window.Resized += () => _windowResized = true;
-                GraphicsDevice = VeldridStartup.CreateGraphicsDevice(Window, _graphicsDeviceOptions, GraphicsBackend.OpenGL);
+                GraphicsDevice = VeldridStartup.CreateGraphicsDevice(Window, _graphicsDeviceOptions, GraphicsBackend.Vulkan);
 
                 GraphicsDeviceCreated?.Invoke();
 
@@ -53,13 +53,16 @@ namespace Tortuga.DesktopPlatform
                 {
                     if (_paused) continue;
 
+                    var inputSnapshot = Window.PumpEvents();
+
+                    if (!Window.Exists) break;
+
                     if (_windowResized)
                     {
                         _windowResized = false;
                         GraphicsDevice.ResizeMainWindow((uint)Window.Width, (uint)Window.Height);
                         Resized?.Invoke();
                     }
-                    var inputSnapshot = Window.PumpEvents();
                     _inputTracker.UpdateFrameInput(inputSnapshot);
                     Tick?.Invoke();
                 }

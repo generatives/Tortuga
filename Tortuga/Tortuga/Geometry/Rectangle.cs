@@ -29,5 +29,20 @@ namespace Tortuga.Geometry
             Width = width;
             Height = height;
         }
+
+        public bool Overlaps(Rectangle other)
+        {
+            if (TopRight.Y < other.BottomLeft.Y
+                || BottomLeft.Y > other.TopRight.Y)
+            {
+                return false;
+            }
+            if (TopRight.X < other.BottomLeft.X
+                || BottomLeft.X > other.TopRight.X)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

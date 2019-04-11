@@ -37,5 +37,20 @@ namespace Tortuga.Geometry
         {
             return new RectangleF(0, 0, size, size);
         }
+
+        public bool Overlaps(RectangleF other)
+        {
+            if (TopRight.Y < other.BottomLeft.Y
+                || BottomLeft.Y > other.TopRight.Y)
+            {
+                return false;
+            }
+            if (TopRight.X < other.BottomLeft.X
+                || BottomLeft.X > other.TopRight.X)
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

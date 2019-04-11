@@ -137,16 +137,8 @@ void main()
             // Create pipeline
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription();
             pipelineDescription.BlendState = BlendStateDescription.SingleOverrideBlend;
-            pipelineDescription.DepthStencilState = new DepthStencilStateDescription(
-                depthTestEnabled: true,
-                depthWriteEnabled: true,
-                comparisonKind: ComparisonKind.LessEqual);
-            pipelineDescription.RasterizerState = new RasterizerStateDescription(
-                cullMode: FaceCullMode.Back,
-                fillMode: PolygonFillMode.Solid,
-                frontFace: FrontFace.Clockwise,
-                depthClipEnabled: true,
-                scissorTestEnabled: false);
+            pipelineDescription.DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual;
+            pipelineDescription.RasterizerState = RasterizerStateDescription.Default;
             pipelineDescription.PrimitiveTopology = PrimitiveTopology.TriangleList;
             pipelineDescription.ResourceLayouts = new ResourceLayout[] { cameraLayout, _textureLayout };
             pipelineDescription.ShaderSet = shaderSet;
