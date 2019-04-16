@@ -187,15 +187,24 @@ void main()
             _surfaces.Remove(surface);
         }
 
-        public void Begin(Matrix4x4 transform)
+        public void Begin(Matrix4x4 transform, Veldrid.Viewport? viewport = null)
         {
             GraphicsDevice.UpdateBuffer(_transfromBuffer, 0, transform);
 
             _commandList.Begin();
 
             _commandList.SetFramebuffer(_swapchain.Framebuffer);
-            _commandList.SetFullViewports();
-            _commandList.ClearColorTarget(0, RgbaFloat.Black);
+
+            if(!viewport.HasValue)
+            {
+                _commandList.SetFullViewports();
+            }
+            else
+            {
+                _commandList.SetViewport(0, viewport.Value);
+            }
+
+            _commandList.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
             _commandList.ClearDepthStencil(1f);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0, _cameraResourceSet);
