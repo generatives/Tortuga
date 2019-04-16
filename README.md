@@ -10,7 +10,7 @@ The project is in the very early stages and is completely undocumented. Currentl
 ## Flying Tortuga
 The repo also contains a project called "Flying Tortuga". This is a Flappy Bird style game being developed alongside the framework as a complete example project and testing ground for realistic game development.
 
-## Acknowledge
+## Acknowledgment
 The font loader and rendering code is ported from https://github.com/cyotek/Cyotek.Drawing.BitmapFont
 
 ## Others
