@@ -33,7 +33,6 @@ namespace Tortuga.Graphics
         private int _windowHeight;
 
         public Viewport Viewport { get; private set; }
-        private float _scale;
 
         public ViewportManager(int virtualWidth, int virtualHeight)
         {
@@ -54,23 +53,10 @@ namespace Tortuga.Graphics
             var xScale = (float)_windowWidth / VirtualWidth;
             var yScale = (float)_windowHeight / VirtualHeight;
 
-            _scale = 1;
+            var scale = xScale < yScale ? xScale : yScale;
 
-            if (xScale > 1 && yScale > 1)
-            {
-                _scale = xScale < yScale ? xScale : yScale;
-            }
-            else if (xScale < 1 && yScale < 1)
-            {
-                _scale = xScale > yScale ? xScale : yScale;
-            }
-            else
-            {
-                _scale = xScale < 1 ? xScale : yScale;
-            }
-
-            var width = _scale * VirtualWidth;
-            var height = _scale * VirtualHeight;
+            var width = scale * VirtualWidth;
+            var height = scale * VirtualHeight;
             var x = (_windowWidth - width) / 2;
             var y = (_windowHeight - height) / 2;
 
@@ -79,7 +65,7 @@ namespace Tortuga.Graphics
 
         public Matrix4x4 GetScalingTransform()
         {
-            return Matrix4x4.CreateScale(_scale * 2, _scale * 2, 1);
+            return Matrix4x4.CreateScale(2f / VirtualWidth, 2f / VirtualHeight, 1);
         }
     }
 }

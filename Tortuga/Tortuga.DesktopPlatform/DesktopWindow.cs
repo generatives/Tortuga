@@ -49,6 +49,8 @@ namespace Tortuga.DesktopPlatform
 
                 GraphicsDeviceCreated?.Invoke();
 
+                Resized?.Invoke();
+
                 while (Window.Exists)
                 {
                     if (_paused) continue;

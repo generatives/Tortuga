@@ -67,13 +67,12 @@ namespace OpenSkiesDemo
             options.Debug = true;
 #endif
 
-            viewport = new ViewportManager(500, 500);
-            viewport.WindowChanged(1280, 720);
-
             _window = platform.CreateWindow(wci, options);
             _window.GraphicsDeviceCreated += LoadResources;
             _window.Tick += Update;
             _window.Resized += _window_Resized;
+
+            viewport = new ViewportManager(1280, 720);
 
             sw = Stopwatch.StartNew();
             double previousElapsed = sw.Elapsed.TotalSeconds;
@@ -146,8 +145,8 @@ namespace OpenSkiesDemo
             //}
 
             var vp = viewport.Viewport;
-            drawDevice.Begin(viewport.GetScalingTransform() * Matrix4x4.CreateScale(1f / vp.Width, 1f / vp.Height, 1f), vp);
-            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), new RectangleF(-250f, -250f, 500f, 500f), RgbaFloat.Black);
+            drawDevice.Begin(viewport.GetScalingTransform(), vp);
+            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), new RectangleF(-viewport.VirtualWidth / 2f, -viewport.VirtualHeight / 2, viewport.VirtualWidth, viewport.VirtualHeight), RgbaFloat.Black);
             drawDevice.Add(drawDevice.Grid, triangleVertices);
             drawDevice.Add(drawDevice.Grid, triangleVertices, Matrix3x2.CreateRotation(0.5f) * Matrix3x2.CreateTranslation(new Vector2(50, 50)));
             drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new RectangleF(-50, 0, 30f, 30f), RgbaFloat.Red);
