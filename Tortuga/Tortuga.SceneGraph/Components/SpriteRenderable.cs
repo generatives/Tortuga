@@ -1,5 +1,5 @@
-﻿using Tortuga.Drawing;
-using Tortuga.Drawing.Resources;
+﻿using Tortuga.Graphics;
+using Tortuga.Graphics.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;

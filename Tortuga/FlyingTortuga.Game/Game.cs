@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Tortuga.Drawing;
+using Tortuga.Graphics;
 using Tortuga.Platform;
 
 namespace FlyingTortuga.Game

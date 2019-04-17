@@ -13,7 +13,7 @@ using Tortuga.Graphics;
 using Tortuga.Geometry;
 using Tortuga.Graphics.Resources;
 
-namespace Tortuga.Drawing
+namespace Tortuga.Graphics
 {
     public class DrawDevice : IDisposable
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using Tortuga.Drawing;
+using Tortuga.Graphics;
 using Tortuga.Geometry;
 using Veldrid;
 

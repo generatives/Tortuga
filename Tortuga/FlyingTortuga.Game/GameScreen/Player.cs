@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
-using Tortuga.Drawing;
+using Tortuga.Graphics;
 using Tortuga.Geometry;
 using Tortuga.Platform;
 using Veldrid;
@@ -17,7 +17,7 @@ namespace FlyingTortuga.Game.GameScreen
         private Vector2 _maxVelocity = new Vector2(100000, 500);
         private Vector2 _acceleration = new Vector2(0, -500);
 
-        private float _jumpSpeed = 400;
+        private float _jumpSpeed = 300;
 
         private Vector2 _size = new Vector2(50, 30);
 

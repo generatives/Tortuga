@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Tortuga.Drawing;
+using Tortuga.Graphics;
 using Veldrid;
 
 namespace Tortuga.Graphics.Resources

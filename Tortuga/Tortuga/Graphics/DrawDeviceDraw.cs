@@ -8,7 +8,7 @@ using Veldrid;
 using System.Linq;
 using Tortuga.Graphics.Resources;
 
-namespace Tortuga.Drawing
+namespace Tortuga.Graphics
 {
     public static class DrawDeviceExt
     {
