@@ -89,6 +89,9 @@ void main()
             _swapchain = swapchain;
             _factory = GraphicsDevice.ResourceFactory;
 
+            var vertexDesc = new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main", true);
+            var fragDesc = new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main", true);
+            var shaders = _factory.CreateFromSpirv(vertexDesc, fragDesc);
             ShaderSetDescription shaderSet = new ShaderSetDescription(
                 new[]
                 {
@@ -97,9 +100,7 @@ void main()
                         new VertexElementDescription("Color", VertexElementSemantic.Color, VertexElementFormat.Float4),
                         new VertexElementDescription("TexCoords", VertexElementSemantic.TextureCoordinate, VertexElementFormat.Float2))
                 },
-                _factory.CreateFromSpirv(
-                    new ShaderDescription(ShaderStages.Vertex, Encoding.UTF8.GetBytes(VertexCode), "main"),
-                    new ShaderDescription(ShaderStages.Fragment, Encoding.UTF8.GetBytes(FragmentCode), "main")));
+                shaders);
 
             var cameraBufferDesc = new ResourceLayoutElementDescription(
                 "CameraBuffer",
@@ -350,7 +351,6 @@ void main()
             _textureLayout.Dispose();
             _pipeline.Dispose();
             _commandList.Dispose();
-            GraphicsDevice.Dispose();
         }
     }
 }

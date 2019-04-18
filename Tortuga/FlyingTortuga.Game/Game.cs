@@ -7,8 +7,8 @@ namespace FlyingTortuga.Game
 {
     public class Game
     {
-        private IScreen _currentScreen;
-        private IScreen _nextScreen;
+        public IScreen CurrentScreen { get; private set; }
+        public IScreen NextScreen { get; set; }
         public IWindow Window { get; private set; }
 
         private double previousElapsed;
@@ -17,7 +17,7 @@ namespace FlyingTortuga.Game
         public Game(IWindow window)
         {
             Window = window;
-            _nextScreen = new GameScreen.GameScreen();
+            NextScreen = new GameScreen.GameScreen();
         }
 
         public void LoadResources()
@@ -32,15 +32,16 @@ namespace FlyingTortuga.Game
             sw.Restart();
             float deltaSeconds = (float)(newElapsed - previousElapsed);
 
-            if(_nextScreen != null)
+            if(NextScreen != null)
             {
-                _currentScreen?.Stopped();
-                _nextScreen.Started(this);
-                _currentScreen = _nextScreen;
-                _nextScreen = null;
+                CurrentScreen?.Stopped();
+                CurrentScreen = NextScreen;
+                GC.Collect();
+                CurrentScreen.Started(this);
+                NextScreen = null;
             }
 
-            _currentScreen?.Tick(deltaSeconds);
+            CurrentScreen?.Tick(deltaSeconds);
         }
     }
 }

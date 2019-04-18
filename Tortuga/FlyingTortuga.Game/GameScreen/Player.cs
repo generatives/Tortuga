@@ -15,13 +15,15 @@ namespace FlyingTortuga.Game.GameScreen
 
         private Vector2 _velocity = new Vector2(200, 0);
         private Vector2 _maxVelocity = new Vector2(100000, 500);
-        private Vector2 _acceleration = new Vector2(0, -500);
+        private Vector2 _acceleration = new Vector2(1, -500);
 
         private float _jumpSpeed = 300;
 
-        private Vector2 _size = new Vector2(50, 30);
+        public Vector2 Size { get; private set; } = new Vector2(50, 30);
 
         private IInputTracker _inputTracker;
+
+        public bool Go { get; set; }
 
         public Player(IInputTracker input)
         {
@@ -30,6 +32,8 @@ namespace FlyingTortuga.Game.GameScreen
 
         public void Update(float deltaTime)
         {
+            if (!Go) return;
+
             if(_inputTracker.GetKeyDown(TKey.Space))
             {
                 _velocity = new Vector2(_velocity.X, _jumpSpeed);
@@ -51,7 +55,7 @@ namespace FlyingTortuga.Game.GameScreen
 
         public RectangleF GetCurrentRectangle()
         {
-            return new RectangleF(Position.X, Position.Y, _size.X, _size.Y);
+            return new RectangleF(Position.X, Position.Y, Size.X, Size.Y);
         }
     }
 }

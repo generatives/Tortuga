@@ -33,6 +33,14 @@ namespace Tortuga.Geometry
             Height = height;
         }
 
+        public RectangleF(Vector2 position, Vector2 size)
+        {
+            X = position.X;
+            Y = position.Y;
+            Width = size.X;
+            Height = size.Y;
+        }
+
         public static RectangleF Square(float size)
         {
             return new RectangleF(0, 0, size, size);

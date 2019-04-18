@@ -4,7 +4,7 @@ using System.Text;
 
 namespace FlyingTortuga.Game
 {
-    interface IScreen
+    public interface IScreen
     {
         void Started(Game game);
         void Stopped();

@@ -21,6 +21,11 @@ namespace FlyingTortuga.Game.GameScreen
 
         private Random _rand = new Random();
 
+        private GameState _state = GameState.WAITING;
+
+        private float PLAYER_DEATH_WAIT_TIME = 0.25f;
+        private float _remainingWaitTime;
+
         private int SCREEN_WIDTH = 1280;
         private int SCREEN_HEIGHT = 720;
 
@@ -28,7 +33,7 @@ namespace FlyingTortuga.Game.GameScreen
         private int MAX_OBSTACLE_WIDTH = 100;
         private int MIN_OBSTACLE_HEIGHT = 10;
         private int MIN_GAP_SIZE = 100;
-        private int MAX_GAP_SIZE = 400;
+        private int MAX_GAP_SIZE = 200;
 
         public void Started(Game game)
         {
@@ -55,8 +60,27 @@ namespace FlyingTortuga.Game.GameScreen
 
         private void Update(float deltaTime)
         {
+            if(_state == GameState.WAITING)
+            {
+                _state = _game.Window.InputTracker.GetKeyDown(Tortuga.Platform.TKey.Space) ? GameState.STARTED : GameState.WAITING;
+                if(_state == GameState.STARTED)
+                {
+                    _player.Go = true;
+                }
+            }
+
+            if(_state == GameState.DIED)
+            {
+                _remainingWaitTime -= deltaTime;
+                if(_remainingWaitTime <= 0)
+                {
+                    _game.NextScreen = new GameScreen();
+                }
+                return;
+            }
+
             _player.Update(deltaTime);
-            if(_player.Position.X + SCREEN_WIDTH / 2 >= _nextSpawnPosition)
+            if(_player.Position.X + SCREEN_WIDTH >= _nextSpawnPosition)
             {
                 SpawnObstacle(_nextSpawnPosition);
                 _nextSpawnPosition = _nextSpawnPosition + _rand.Next(MIN_OBSTACLE_SPACING, MAX_OBSTACLE_SPACING);
@@ -70,7 +94,7 @@ namespace FlyingTortuga.Game.GameScreen
         private void Render()
         {
             _drawDevice.Begin(
-                Matrix4x4.CreateTranslation(-_player.Position.X, 0, 0) * _viewportManager.GetScalingTransform(),
+                Matrix4x4.CreateTranslation(-_player.Position.X - SCREEN_WIDTH * 0.4f, 0, 0) * _viewportManager.GetScalingTransform(),
                 _viewportManager.Viewport);
             _player.Render(_drawDevice);
             foreach (var obstacle in _obstacles)
@@ -93,9 +117,21 @@ namespace FlyingTortuga.Game.GameScreen
             _obstacles.Add(new Obstacle(new Vector2(position, location + gapSize - (SCREEN_HEIGHT / 2)), topSize, _player, this));
         }
 
+        public void PlayerHitObstacle()
+        {
+            _state = GameState.DIED;
+            _player.Go = false;
+            _remainingWaitTime = PLAYER_DEATH_WAIT_TIME;
+        }
+
         public void Stopped()
         {
             _drawDevice.Dispose();
+        }
+
+        enum GameState
+        {
+            WAITING, STARTED, DIED
         }
     }
 }

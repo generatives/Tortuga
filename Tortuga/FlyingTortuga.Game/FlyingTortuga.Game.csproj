@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Content\FlyingTortuga.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Content\FlyingTortuga.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Tortuga\Tortuga.csproj" />
   </ItemGroup>
 
