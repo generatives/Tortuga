@@ -5,6 +5,8 @@ using System;
 using System.IO;
 using Veldrid;
 using Veldrid.StartupUtilities;
+using System.Collections.Generic;
+using Tortuga.Assets;
 
 namespace Tortuga.DesktopPlatform
 {
@@ -22,9 +24,14 @@ namespace Tortuga.DesktopPlatform
             return new DesktopWindow(arg, options);
         }
 
-        public ISound CreateSound(string resourceId)
+        public ISound CreateSound(Stream stream)
         {
-            return new DesktopSound(File.OpenRead(resourceId), _engine);
+            return new DesktopSound(stream, _engine);
+        }
+
+        public IEnumerable<IAssetSource> GetDefaultAssetSources()
+        {
+            return new[] { new FileSystemAssetSource("Assets/") };
         }
     }
 }

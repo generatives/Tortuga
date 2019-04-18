@@ -150,10 +150,9 @@ void main()
 
             Image<Rgba32> whitePixel = new Image<Rgba32>(1, 1);
             whitePixel[0, 0] = Rgba32.White;
-            var whitePixelTex = new ImageSharpTexture(whitePixel, false);
-            var whitePixelDevTex = whitePixelTex.CreateDeviceTexture(GraphicsDevice, _factory);
-            WhitePixel = CreateSurface(whitePixelDevTex);
 
+            WhitePixel = CreateSurface(whitePixel);
+            
             Image<Rgba32> gridImage = new Image<Rgba32>(3, 3);
             gridImage[0, 0] = Rgba32.White;
             gridImage[1, 0] = Rgba32.Red;
@@ -166,15 +165,16 @@ void main()
             gridImage[0, 2] = Rgba32.White;
             gridImage[1, 2] = Rgba32.Blue;
             gridImage[2, 2] = Rgba32.White;
-            var gridTex = new ImageSharpTexture(gridImage, false);
-            var gridDevTex = gridTex.CreateDeviceTexture(GraphicsDevice, _factory);
-            Grid = CreateSurface(gridDevTex);
+
+            Grid = CreateSurface(gridImage);
         }
 
-        public Surface CreateSurface(Texture texture)
+        public Surface CreateSurface(Image<Rgba32> image)
         {
             var factory = GraphicsDevice.ResourceFactory;
-            var textureView = factory.CreateTextureView(new TextureViewDescription(texture));
+            var texture = new ImageSharpTexture(image, false);
+            var deviceTexture = texture.CreateDeviceTexture(GraphicsDevice, _factory);
+            var textureView = factory.CreateTextureView(new TextureViewDescription(deviceTexture));
             var resourceSet = factory.CreateResourceSet(
                 new ResourceSetDescription(_textureLayout, textureView, GraphicsDevice.PointSampler, _textureSizeBuffer));
             var material = new Surface(resourceSet, texture.Width, texture.Height);

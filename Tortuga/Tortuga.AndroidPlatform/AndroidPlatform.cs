@@ -5,6 +5,8 @@ using Tortuga.Platform;
 using System;
 using System.IO;
 using Veldrid;
+using System.Collections.Generic;
+using Tortuga.Assets;
 
 namespace Tortuga.AndroidPlatform
 {
@@ -37,14 +39,61 @@ namespace Tortuga.AndroidPlatform
             }
         }
 
-        public ISound CreateSound(string resourceId)
+        public ISound CreateSound(System.IO.Stream stream)
         {
-            return new AndroidSound(MediaPlayer.Create(_activity, GetUriFromResourceId(resourceId)));
+            var player = new MediaPlayer();
+            player.SetDataSource(new StreamMediaDataSource(stream));
+            player.Prepare();
+            return new AndroidSound(player);
         }
 
-        private Android.Net.Uri GetUriFromResourceId(string resourceId)
+        public IEnumerable<IAssetSource> GetDefaultAssetSources()
         {
-            return Android.Net.Uri.Parse("android.resource://" + _activity.PackageName + "/" + resourceId);
+            return new[] { new AndroidResourceAssetSource(_activity.Assets) };
+        }
+    }
+
+    public class StreamMediaDataSource : MediaDataSource
+    {
+        System.IO.Stream data;
+
+        public StreamMediaDataSource(System.IO.Stream Data)
+        {
+            data = Data;
+        }
+
+        public override long Size
+        {
+            get
+            {
+                return data.Length;
+            }
+        }
+
+        public override int ReadAt(long position, byte[] buffer, int offset, int size)
+        {
+            data.Seek(position, System.IO.SeekOrigin.Begin);
+            return data.Read(buffer, offset, size);
+        }
+
+        public override void Close()
+        {
+            if (data != null)
+            {
+                data.Dispose();
+                data = null;
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (data != null)
+            {
+                data.Dispose();
+                data = null;
+            }
         }
     }
 }

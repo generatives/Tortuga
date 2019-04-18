@@ -8,6 +8,7 @@ using Tortuga.Geometry;
 using Tortuga.Graphics.Resources;
 using Veldrid;
 using Veldrid.ImageSharp;
+using Tortuga.Assets;
 
 namespace Tortuga.Graphics.Text
 {
@@ -17,7 +18,7 @@ namespace Tortuga.Graphics.Text
         private DrawDevice _device;
         private Surface[] _pageSurfaces;
 
-        public TextRenderer(BitmapFont font, DrawDevice device)
+        public TextRenderer(BitmapFont font, AssetLoader loader, DrawDevice device)
         {
             _font = font;
             _device = device;
@@ -25,9 +26,8 @@ namespace Tortuga.Graphics.Text
             for(var i = 0; i < _font.Pages.Length; i++)
             {
                 var page = _font.Pages[i];
-                var ist = new ImageSharpTexture(page.FileName);
-                var texture = ist.CreateDeviceTexture(_device.GraphicsDevice, _device.GraphicsDevice.ResourceFactory);
-                _pageSurfaces[i] = _device.CreateSurface(texture);
+                var image = loader.LoadImage(page.FileName);
+                _pageSurfaces[i] = _device.CreateSurface(image);
             }
         }
 

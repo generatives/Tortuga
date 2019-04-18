@@ -13,7 +13,7 @@ using SixLabors.ImageSharp;
 using Veldrid.ImageSharp;
 using Tortuga.Graphics.Text;
 using Cyotek.Drawing.BitmapFont;
-using Tortuga.Graphics;
+using Tortuga.Assets;
 
 namespace OpenSkiesDemo
 {
@@ -30,6 +30,7 @@ namespace OpenSkiesDemo
     {
         private Vector2 objectPosition;
         private IWindow _window;
+        private AssetLoader _assetLoader;
         private double previousElapsed;
         private BitmapFont font;
         private TextRenderer textRenderer;
@@ -46,6 +47,7 @@ namespace OpenSkiesDemo
         public void Run()
         {
             var platform = new DesktopPlatform();
+            _assetLoader = AssetLoader.DefaultAssetLoader(platform);
 
             WindowCreateInfo wci = new WindowCreateInfo
             {
@@ -90,9 +92,8 @@ namespace OpenSkiesDemo
         {
             drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
 
-            font = new BitmapFont();
-            font.Load("Assets/testfont.fnt");
-            textRenderer = new TextRenderer(font, drawDevice);
+            font = _assetLoader.LoadFont(BitmapFont.DefaultFontName);
+            textRenderer = new TextRenderer(font, _assetLoader, drawDevice);
         }
 
         public void Update()

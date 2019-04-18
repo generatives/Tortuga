@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="AndroidInputTracker.cs" />
     <Compile Include="AndroidPlatform.cs" />
+    <Compile Include="AndroidResourceAssetSource.cs" />
     <Compile Include="AndroidSound.cs" />
     <Compile Include="AndroidWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
