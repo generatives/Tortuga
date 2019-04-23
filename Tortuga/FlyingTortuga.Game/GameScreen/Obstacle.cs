@@ -5,6 +5,7 @@ using System.Text;
 using Tortuga.Graphics;
 using Tortuga.Geometry;
 using Veldrid;
+using Tortuga.Graphics.Resources;
 
 namespace FlyingTortuga.Game.GameScreen
 {
@@ -13,19 +14,19 @@ namespace FlyingTortuga.Game.GameScreen
         private bool _hit;
         private RectangleF _rect;
 
-        private Player _player;
         private GameScreen _gameScreen;
+        private Surface _surface;
 
-        public Obstacle(Vector2 position, Vector2 size, Player player, GameScreen gameScreen)
+        public Obstacle(Vector2 position, Vector2 size, GameScreen gameScreen, Surface surface)
         {
             _rect = new RectangleF(position.X, position.Y, size.X, size.Y);
-            _player = player;
             _gameScreen = gameScreen;
+            _surface = surface;
         }
 
         public void Update(float deltaTime)
         {
-            var playerRect = new RectangleF(_player.Position, _player.Size);
+            var playerRect = _gameScreen.Player.GetCurrentRectangle();
             if(playerRect.Overlaps(_rect))
             {
                 _hit = true;
@@ -35,7 +36,7 @@ namespace FlyingTortuga.Game.GameScreen
 
         public void Render(DrawDevice drawDevice)
         {
-            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), _rect, _hit ? RgbaFloat.Red : RgbaFloat.White);
+            drawDevice.Add(_surface, RectangleF.ZeroRect(16, 32), _rect, RgbaFloat.White);
         }
     }
 }

@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Content\FlyingTortuga.png" />
+    <None Remove="Assets\Coral.png" />
+    <None Remove="Assets\FlyingTortuga.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Content\FlyingTortuga.png" />
+    <EmbeddedResource Include="Assets\Coral.png" />
+    <EmbeddedResource Include="Assets\FlyingTortuga.png" />
   </ItemGroup>
 
   <ItemGroup>

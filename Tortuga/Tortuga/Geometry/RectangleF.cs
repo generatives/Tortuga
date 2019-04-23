@@ -46,6 +46,11 @@ namespace Tortuga.Geometry
             return new RectangleF(0, 0, size, size);
         }
 
+        public static RectangleF ZeroRect(float width, float height)
+        {
+            return new RectangleF(0, 0, width, height);
+        }
+
         public bool Overlaps(RectangleF other)
         {
             if (TopRight.Y < other.BottomLeft.Y

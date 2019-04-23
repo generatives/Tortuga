@@ -137,7 +137,7 @@ void main()
 
             // Create pipeline
             GraphicsPipelineDescription pipelineDescription = new GraphicsPipelineDescription();
-            pipelineDescription.BlendState = BlendStateDescription.SingleOverrideBlend;
+            pipelineDescription.BlendState = BlendStateDescription.SingleAlphaBlend;
             pipelineDescription.DepthStencilState = DepthStencilStateDescription.DepthOnlyLessEqual;
             pipelineDescription.RasterizerState = RasterizerStateDescription.Default;
             pipelineDescription.PrimitiveTopology = PrimitiveTopology.TriangleList;
@@ -209,9 +209,6 @@ void main()
             _commandList.ClearDepthStencil(1f);
             _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0, _cameraResourceSet);
-            
-            //Draw(WhitePixel, new Rectangle(-(int)info.ScreenSize.X / 2, 0, (int)info.ScreenSize.X, 1));
-            //Draw(WhitePixel, new Rectangle(0, -(int)info.ScreenSize.Y / 2, 1, (int)info.ScreenSize.Y));
         }
 
         public void End()

@@ -6,6 +6,7 @@ using Tortuga.Graphics;
 using Tortuga.Geometry;
 using Tortuga.Platform;
 using Veldrid;
+using Tortuga.Graphics.Resources;
 
 namespace FlyingTortuga.Game.GameScreen
 {
@@ -19,14 +20,16 @@ namespace FlyingTortuga.Game.GameScreen
 
         private float _jumpSpeed = 300;
 
-        public Vector2 Size { get; private set; } = new Vector2(50, 30);
+        public Vector2 Size { get; private set; } = new Vector2(32, 32);
 
         private IInputTracker _inputTracker;
+        private Surface _surface;
 
         public bool Go { get; set; }
 
-        public Player(IInputTracker input)
+        public Player(Surface surface, IInputTracker input)
         {
+            _surface = surface;
             _inputTracker = input;
         }
 
@@ -50,7 +53,7 @@ namespace FlyingTortuga.Game.GameScreen
 
         public void Render(DrawDevice drawDevice)
         {
-            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), GetCurrentRectangle(), RgbaFloat.Green);
+            drawDevice.Add(_surface, RectangleF.ZeroRect(16, 16), GetCurrentRectangle(), RgbaFloat.Green);
         }
 
         public RectangleF GetCurrentRectangle()

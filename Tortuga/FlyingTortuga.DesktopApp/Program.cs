@@ -45,7 +45,7 @@ namespace FlyingTortuga.DesktopApp
 
             var _window = platform.CreateWindow(wci, options);
 
-            var game = new Game.Game(_window);
+            var game = new Game.Game(platform, _window);
 
             _window.GraphicsDeviceCreated += game.LoadResources;
             _window.Tick += game.Tick;

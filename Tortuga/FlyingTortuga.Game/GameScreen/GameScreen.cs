@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using Tortuga.Graphics;
+using Tortuga.Graphics.Resources;
 
 namespace FlyingTortuga.Game.GameScreen
 {
@@ -12,12 +13,14 @@ namespace FlyingTortuga.Game.GameScreen
         private DrawDevice _drawDevice;
         private ViewportManager _viewportManager;
 
-        private Player _player;
+        public Player Player { get; private set; }
+        private Surface _playerSurface;
 
         private int MIN_OBSTACLE_SPACING = 400;
         private int MAX_OBSTACLE_SPACING = 900;
         private int _nextSpawnPosition = 500;
         private List<Obstacle> _obstacles;
+        private Surface _obstacleSurface;
 
         private Random _rand = new Random();
 
@@ -43,7 +46,13 @@ namespace FlyingTortuga.Game.GameScreen
             _viewportManager = new ViewportManager(SCREEN_WIDTH, SCREEN_HEIGHT);
             _viewportManager.WindowChanged(_game.Window.Width, _game.Window.Height);
 
-            _player = new Player(_game.Window.InputTracker);
+            var obstacleImage = game.Assets.LoadImage("Coral.png");
+            _obstacleSurface = _drawDevice.CreateSurface(obstacleImage);
+
+            var playerImage = game.Assets.LoadImage("FlyingTortuga.png");
+            _playerSurface = _drawDevice.CreateSurface(playerImage);
+
+            Player = new Player(_playerSurface, _game.Window.InputTracker);
             _obstacles = new List<Obstacle>();
         }
 
@@ -65,7 +74,7 @@ namespace FlyingTortuga.Game.GameScreen
                 _state = _game.Window.InputTracker.GetKeyDown(Tortuga.Platform.TKey.Space) ? GameState.STARTED : GameState.WAITING;
                 if(_state == GameState.STARTED)
                 {
-                    _player.Go = true;
+                    Player.Go = true;
                 }
             }
 
@@ -79,8 +88,8 @@ namespace FlyingTortuga.Game.GameScreen
                 return;
             }
 
-            _player.Update(deltaTime);
-            if(_player.Position.X + SCREEN_WIDTH >= _nextSpawnPosition)
+            Player.Update(deltaTime);
+            if(Player.Position.X + SCREEN_WIDTH >= _nextSpawnPosition)
             {
                 SpawnObstacle(_nextSpawnPosition);
                 _nextSpawnPosition = _nextSpawnPosition + _rand.Next(MIN_OBSTACLE_SPACING, MAX_OBSTACLE_SPACING);
@@ -94,9 +103,9 @@ namespace FlyingTortuga.Game.GameScreen
         private void Render()
         {
             _drawDevice.Begin(
-                Matrix4x4.CreateTranslation(-_player.Position.X - SCREEN_WIDTH * 0.4f, 0, 0) * _viewportManager.GetScalingTransform(),
+                Matrix4x4.CreateTranslation(-Player.Position.X - SCREEN_WIDTH * 0.4f, 0, 0) * _viewportManager.GetScalingTransform(),
                 _viewportManager.Viewport);
-            _player.Render(_drawDevice);
+            Player.Render(_drawDevice);
             foreach (var obstacle in _obstacles)
             {
                 obstacle.Render(_drawDevice);
@@ -111,16 +120,16 @@ namespace FlyingTortuga.Game.GameScreen
             var width = _rand.Next(MIN_OBSTACLE_WIDTH, MAX_OBSTACLE_WIDTH);
 
             var bottomSize = new Vector2(width, location);
-            _obstacles.Add(new Obstacle(new Vector2(position, -SCREEN_HEIGHT / 2), bottomSize, _player, this));
+            _obstacles.Add(new Obstacle(new Vector2(position, -SCREEN_HEIGHT / 2), bottomSize, this, _obstacleSurface));
 
             var topSize = new Vector2(width, SCREEN_HEIGHT - location - gapSize);
-            _obstacles.Add(new Obstacle(new Vector2(position, location + gapSize - (SCREEN_HEIGHT / 2)), topSize, _player, this));
+            _obstacles.Add(new Obstacle(new Vector2(position, location + gapSize - (SCREEN_HEIGHT / 2)), topSize, this, _obstacleSurface));
         }
 
         public void PlayerHitObstacle()
         {
             _state = GameState.DIED;
-            _player.Go = false;
+            Player.Go = false;
             _remainingWaitTime = PLAYER_DEATH_WAIT_TIME;
         }
 
