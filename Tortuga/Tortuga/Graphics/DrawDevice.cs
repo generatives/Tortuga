@@ -239,27 +239,29 @@ void main()
             _length = 0;
         }
 
-        public void Add(Surface surface, RectangleF texRect, RectangleF rect, RgbaFloat color)
+        public void Add(Surface surface, RectangleF texRect, RectangleF rect, RgbaFloat? color = null)
         {
+            var realColor = color.HasValue ? color.Value : RgbaFloat.White;
             EnsureAdditionalSize(6);
-            _vertexArray[_length] = new Vertex(new Vector2(rect.Left, rect.Top), color, new Vector2(texRect.Left, texRect.Bottom));
-            _vertexArray[_length + 1] = new Vertex(new Vector2(rect.Right, rect.Top), color, new Vector2(texRect.Right, texRect.Bottom));
-            _vertexArray[_length + 2] = new Vertex(new Vector2(rect.Left, rect.Bottom), color, new Vector2(texRect.Left, texRect.Top));
-            _vertexArray[_length + 3] = new Vertex(new Vector2(rect.Left, rect.Bottom), color, new Vector2(texRect.Left, texRect.Top));
-            _vertexArray[_length + 4] = new Vertex(new Vector2(rect.Right, rect.Top), color, new Vector2(texRect.Right, texRect.Bottom));
-            _vertexArray[_length + 5] = new Vertex(new Vector2(rect.Right, rect.Bottom), color, new Vector2(texRect.Right, texRect.Top));
+            _vertexArray[_length] = new Vertex(new Vector2(rect.Left, rect.Top), realColor, new Vector2(texRect.Left, texRect.Bottom));
+            _vertexArray[_length + 1] = new Vertex(new Vector2(rect.Right, rect.Top), realColor, new Vector2(texRect.Right, texRect.Bottom));
+            _vertexArray[_length + 2] = new Vertex(new Vector2(rect.Left, rect.Bottom), realColor, new Vector2(texRect.Left, texRect.Top));
+            _vertexArray[_length + 3] = new Vertex(new Vector2(rect.Left, rect.Bottom), realColor, new Vector2(texRect.Left, texRect.Top));
+            _vertexArray[_length + 4] = new Vertex(new Vector2(rect.Right, rect.Top), realColor, new Vector2(texRect.Right, texRect.Bottom));
+            _vertexArray[_length + 5] = new Vertex(new Vector2(rect.Right, rect.Bottom), realColor, new Vector2(texRect.Right, texRect.Top));
             AddBatch(surface, 6);
         }
 
-        public void Add(Surface surface, RectangleF texRect, Vector2 size, Matrix3x2 transform, RgbaFloat color)
+        public void Add(Surface surface, RectangleF texRect, Vector2 size, Matrix3x2 transform, RgbaFloat? color = null)
         {
+            var realColor = color.HasValue ? color.Value : RgbaFloat.White;
             EnsureAdditionalSize(6);
-            _vertexArray[_length] = new Vertex(Vector2.Transform(new Vector2(0, 0), transform), color, new Vector2(texRect.Left, texRect.Top));
-            _vertexArray[_length + 1] = new Vertex(Vector2.Transform(new Vector2(0, size.Y), transform), color, new Vector2(texRect.Left, texRect.Bottom));
-            _vertexArray[_length + 2] = new Vertex(Vector2.Transform(new Vector2(size.X, 0), transform), color, new Vector2(texRect.Right, texRect.Top));
-            _vertexArray[_length + 3] = new Vertex(Vector2.Transform(new Vector2(0, size.Y), transform), color, new Vector2(texRect.Left, texRect.Bottom));
-            _vertexArray[_length + 4] = new Vertex(Vector2.Transform(new Vector2(size.X, size.Y), transform), color, new Vector2(texRect.Right, texRect.Bottom));
-            _vertexArray[_length + 5] = new Vertex(Vector2.Transform(new Vector2(size.X, 0), transform), color, new Vector2(texRect.Right, texRect.Top));
+            _vertexArray[_length] = new Vertex(Vector2.Transform(new Vector2(0, 0), transform), realColor, new Vector2(texRect.Left, texRect.Top));
+            _vertexArray[_length + 1] = new Vertex(Vector2.Transform(new Vector2(0, size.Y), transform), realColor, new Vector2(texRect.Left, texRect.Bottom));
+            _vertexArray[_length + 2] = new Vertex(Vector2.Transform(new Vector2(size.X, 0), transform), realColor, new Vector2(texRect.Right, texRect.Top));
+            _vertexArray[_length + 3] = new Vertex(Vector2.Transform(new Vector2(0, size.Y), transform), realColor, new Vector2(texRect.Left, texRect.Bottom));
+            _vertexArray[_length + 4] = new Vertex(Vector2.Transform(new Vector2(size.X, size.Y), transform), realColor, new Vector2(texRect.Right, texRect.Bottom));
+            _vertexArray[_length + 5] = new Vertex(Vector2.Transform(new Vector2(size.X, 0), transform), realColor, new Vector2(texRect.Right, texRect.Top));
             AddBatch(surface, 6);
         }
 

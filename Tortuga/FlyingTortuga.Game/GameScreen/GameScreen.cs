@@ -14,7 +14,6 @@ namespace FlyingTortuga.Game.GameScreen
         private ViewportManager _viewportManager;
 
         public Player Player { get; private set; }
-        private Surface _playerSurface;
 
         private int MIN_OBSTACLE_SPACING = 400;
         private int MAX_OBSTACLE_SPACING = 900;
@@ -50,9 +49,10 @@ namespace FlyingTortuga.Game.GameScreen
             _obstacleSurface = _drawDevice.CreateSurface(obstacleImage);
 
             var playerImage = game.Assets.LoadImage("FlyingTortuga.png");
-            _playerSurface = _drawDevice.CreateSurface(playerImage);
+            var playerSurface = _drawDevice.CreateSurface(playerImage);
+            var spriteSheet = SpriteSheet.CreateGrid(playerSurface, 16, 16, 2, false);
 
-            Player = new Player(_playerSurface, _game.Window.InputTracker);
+            Player = new Player(spriteSheet, _game.Window.InputTracker);
             _obstacles = new List<Obstacle>();
         }
 

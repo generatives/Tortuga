@@ -26,7 +26,7 @@ namespace FlyingTortuga.Game.GameScreen
 
         public void Update(float deltaTime)
         {
-            var playerRect = _gameScreen.Player.GetCurrentRectangle();
+            var playerRect = _gameScreen.Player.GetBoundingBox();
             if(playerRect.Overlaps(_rect))
             {
                 _hit = true;

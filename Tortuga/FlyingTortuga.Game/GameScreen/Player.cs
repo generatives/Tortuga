@@ -23,14 +23,17 @@ namespace FlyingTortuga.Game.GameScreen
         public Vector2 Size { get; private set; } = new Vector2(32, 32);
 
         private IInputTracker _inputTracker;
-        private Surface _surface;
+        private SpriteSheet _sheet;
+        private float _timeSinceFlap;
+        private float _wingsDownTime = 0.1f;
 
         public bool Go { get; set; }
 
-        public Player(Surface surface, IInputTracker input)
+        public Player(SpriteSheet sheet, IInputTracker input)
         {
-            _surface = surface;
+            _sheet = sheet;
             _inputTracker = input;
+            _timeSinceFlap = _wingsDownTime + 1;
         }
 
         public void Update(float deltaTime)
@@ -40,7 +43,10 @@ namespace FlyingTortuga.Game.GameScreen
             if(_inputTracker.GetKeyDown(TKey.Space))
             {
                 _velocity = new Vector2(_velocity.X, _jumpSpeed);
+                _timeSinceFlap = 0;
             }
+
+            _timeSinceFlap += deltaTime;
 
             _velocity += _acceleration * deltaTime;
             if (_velocity.X > _maxVelocity.X) _velocity = new Vector2(_maxVelocity.X, _velocity.Y);
@@ -53,10 +59,11 @@ namespace FlyingTortuga.Game.GameScreen
 
         public void Render(DrawDevice drawDevice)
         {
-            drawDevice.Add(_surface, RectangleF.ZeroRect(16, 16), GetCurrentRectangle(), RgbaFloat.Green);
+            var frame = _timeSinceFlap < _wingsDownTime ? _sheet[1] : _sheet[0];
+            drawDevice.Add(frame, GetBoundingBox());
         }
 
-        public RectangleF GetCurrentRectangle()
+        public RectangleF GetBoundingBox()
         {
             return new RectangleF(Position.X, Position.Y, Size.X, Size.Y);
         }
