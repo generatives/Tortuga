@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Cyotek.Drawing.BitmapFont;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using Tortuga.Geometry;
 using Tortuga.Graphics;
 using Tortuga.Graphics.Resources;
+using Tortuga.Graphics.Text;
 
 namespace FlyingTortuga.Game.GameScreen
 {
@@ -15,6 +17,7 @@ namespace FlyingTortuga.Game.GameScreen
         private ViewportManager _viewportManager;
 
         private Surface _background;
+        private TextRenderer _textRenderer;
 
         public Player Player { get; private set; }
 
@@ -43,6 +46,7 @@ namespace FlyingTortuga.Game.GameScreen
             _viewportManager.WindowChanged(_game.Window.Width, _game.Window.Height);
 
             _background = _drawDevice.CreateSurface(game.Assets.LoadImage("Background.png"));
+            _textRenderer = new TextRenderer(game.Assets.LoadFont(BitmapFont.DefaultFontName), game.Assets, _drawDevice);
 
             var playerImage = game.Assets.LoadImage("FlyingTortuga.png");
             var playerSurface = _drawDevice.CreateSurface(playerImage);
@@ -102,6 +106,7 @@ namespace FlyingTortuga.Game.GameScreen
         {
             _drawDevice.Begin(_viewportManager.GetScalingTransform(), _viewportManager.Viewport);
             _drawDevice.Add(_background, new RectangleF(-(SCREEN_WIDTH / 2f), -(SCREEN_HEIGHT / 2f), SCREEN_WIDTH, SCREEN_HEIGHT));
+            _textRenderer.DrawText($"Distance: {(int)Player.Position.X / 16}", new Vector2(-(SCREEN_WIDTH / 2) + 10, (SCREEN_HEIGHT / 2) - 40));
 
             _drawDevice.Transform = Matrix4x4.CreateTranslation(-Player.Position.X - SCREEN_WIDTH * 0.4f, 0, 0) *
                 _viewportManager.GetScalingTransform();
@@ -121,8 +126,7 @@ namespace FlyingTortuga.Game.GameScreen
             var prototype = _prototypes[_rand.Next(0, _prototypes.Count)];
 
             var location = _rand.Next(prototype.MinHeight, prototype.MaxHeight);
-            var maxScale = Math.Min(prototype.MaxScale, (SCREEN_HEIGHT - location) / prototype.Height);
-            var scale = (float)_rand.NextDouble() * (maxScale - prototype.MinScale) + prototype.MinScale;
+            var scale = (float)_rand.NextDouble() * (prototype.MaxScale - prototype.MinScale) + prototype.MinScale;
 
             var size = new Vector2(prototype.Width * scale, prototype.Height * scale);
             _obstacles.Add(new Obstacle(new Vector2(position, -SCREEN_HEIGHT / 2 + location), size, this, prototype.Surface));
