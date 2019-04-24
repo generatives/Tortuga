@@ -12,6 +12,15 @@ namespace Tortuga.Graphics
 {
     public static class DrawDeviceExt
     {
+        public static void Add(this DrawDevice device, Surface surface, RectangleF rect, RgbaFloat? color = null)
+        {
+            device.Add(surface, RectangleF.ZeroRect(surface.Width, surface.Height), rect, color);
+        }
+
+        public static void Add(this DrawDevice device, Surface surface, Vector2 size, Matrix3x2 transform, RgbaFloat? color = null)
+        {
+            device.Add(surface, RectangleF.ZeroRect(surface.Width, surface.Height), size, transform, color);
+        }
 
         public static void Add(this DrawDevice device, SubSurface surface, RectangleF rect, RgbaFloat? color = null)
         {

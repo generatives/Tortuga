@@ -5,13 +5,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Background.png" />
+    <None Remove="Assets\Bird.png" />
     <None Remove="Assets\Coral.png" />
     <None Remove="Assets\FlyingTortuga.png" />
+    <None Remove="Assets\PalmTree.png" />
+    <None Remove="Assets\Rock.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\Coral.png" />
+    <EmbeddedResource Include="Assets\Bird.png" />
+    <Content Include="Assets\Coral.png" />
     <EmbeddedResource Include="Assets\FlyingTortuga.png" />
+    <EmbeddedResource Include="Assets\PalmTree.png" />
+    <EmbeddedResource Include="Assets\Rock.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Background.png" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Tortuga.Geometry;
 using Tortuga.Graphics;
 using Tortuga.Graphics.Resources;
 
@@ -13,13 +14,15 @@ namespace FlyingTortuga.Game.GameScreen
         private DrawDevice _drawDevice;
         private ViewportManager _viewportManager;
 
+        private Surface _background;
+
         public Player Player { get; private set; }
 
-        private int MIN_OBSTACLE_SPACING = 400;
-        private int MAX_OBSTACLE_SPACING = 900;
+        private int MIN_OBSTACLE_SPACING = 150;
+        private int MAX_OBSTACLE_SPACING = 300;
         private int _nextSpawnPosition = 500;
         private List<Obstacle> _obstacles;
-        private Surface _obstacleSurface;
+        private List<ObstaclePrototype> _prototypes;
 
         private Random _rand = new Random();
 
@@ -28,14 +31,8 @@ namespace FlyingTortuga.Game.GameScreen
         private float PLAYER_DEATH_WAIT_TIME = 0.25f;
         private float _remainingWaitTime;
 
-        private int SCREEN_WIDTH = 1280;
-        private int SCREEN_HEIGHT = 720;
-
-        private int MIN_OBSTACLE_WIDTH = 20;
-        private int MAX_OBSTACLE_WIDTH = 100;
-        private int MIN_OBSTACLE_HEIGHT = 10;
-        private int MIN_GAP_SIZE = 100;
-        private int MAX_GAP_SIZE = 200;
+        public static int SCREEN_WIDTH = 1280;
+        public static int SCREEN_HEIGHT = 720;
 
         public void Started(Game game)
         {
@@ -45,8 +42,7 @@ namespace FlyingTortuga.Game.GameScreen
             _viewportManager = new ViewportManager(SCREEN_WIDTH, SCREEN_HEIGHT);
             _viewportManager.WindowChanged(_game.Window.Width, _game.Window.Height);
 
-            var obstacleImage = game.Assets.LoadImage("Coral.png");
-            _obstacleSurface = _drawDevice.CreateSurface(obstacleImage);
+            _background = _drawDevice.CreateSurface(game.Assets.LoadImage("Background.png"));
 
             var playerImage = game.Assets.LoadImage("FlyingTortuga.png");
             var playerSurface = _drawDevice.CreateSurface(playerImage);
@@ -54,6 +50,8 @@ namespace FlyingTortuga.Game.GameScreen
 
             Player = new Player(spriteSheet, _game.Window.InputTracker);
             _obstacles = new List<Obstacle>();
+
+            FillObstaclePrototypes();
         }
 
         private void Window_Resized()
@@ -102,28 +100,32 @@ namespace FlyingTortuga.Game.GameScreen
 
         private void Render()
         {
-            _drawDevice.Begin(
-                Matrix4x4.CreateTranslation(-Player.Position.X - SCREEN_WIDTH * 0.4f, 0, 0) * _viewportManager.GetScalingTransform(),
-                _viewportManager.Viewport);
+            _drawDevice.Begin(_viewportManager.GetScalingTransform(), _viewportManager.Viewport);
+            _drawDevice.Add(_background, new RectangleF(-(SCREEN_WIDTH / 2f), -(SCREEN_HEIGHT / 2f), SCREEN_WIDTH, SCREEN_HEIGHT));
+
+            _drawDevice.Transform = Matrix4x4.CreateTranslation(-Player.Position.X - SCREEN_WIDTH * 0.4f, 0, 0) *
+                _viewportManager.GetScalingTransform();
             Player.Render(_drawDevice);
             foreach (var obstacle in _obstacles)
             {
                 obstacle.Render(_drawDevice);
             }
             _drawDevice.End();
+
+            _game.Window.GraphicsDevice.SwapBuffers(_game.Window.MainSwapchain);
+            _game.Window.GraphicsDevice.WaitForIdle();
         }
 
         private void SpawnObstacle(float position)
         {
-            var gapSize = _rand.Next(MIN_GAP_SIZE, MAX_GAP_SIZE);
-            var location = _rand.Next(MIN_OBSTACLE_HEIGHT, SCREEN_HEIGHT - MIN_OBSTACLE_HEIGHT - gapSize);
-            var width = _rand.Next(MIN_OBSTACLE_WIDTH, MAX_OBSTACLE_WIDTH);
+            var prototype = _prototypes[_rand.Next(0, _prototypes.Count)];
 
-            var bottomSize = new Vector2(width, location);
-            _obstacles.Add(new Obstacle(new Vector2(position, -SCREEN_HEIGHT / 2), bottomSize, this, _obstacleSurface));
+            var location = _rand.Next(prototype.MinHeight, prototype.MaxHeight);
+            var maxScale = Math.Min(prototype.MaxScale, (SCREEN_HEIGHT - location) / prototype.Height);
+            var scale = (float)_rand.NextDouble() * (maxScale - prototype.MinScale) + prototype.MinScale;
 
-            var topSize = new Vector2(width, SCREEN_HEIGHT - location - gapSize);
-            _obstacles.Add(new Obstacle(new Vector2(position, location + gapSize - (SCREEN_HEIGHT / 2)), topSize, this, _obstacleSurface));
+            var size = new Vector2(prototype.Width * scale, prototype.Height * scale);
+            _obstacles.Add(new Obstacle(new Vector2(position, -SCREEN_HEIGHT / 2 + location), size, this, prototype.Surface));
         }
 
         public void PlayerHitObstacle()
@@ -131,6 +133,37 @@ namespace FlyingTortuga.Game.GameScreen
             _state = GameState.DIED;
             Player.Go = false;
             _remainingWaitTime = PLAYER_DEATH_WAIT_TIME;
+        }
+
+        public void AddPrototype(ObstaclePrototype prototype, int num)
+        {
+            for(int i = 0; i < num; i++)
+            {
+                _prototypes.Add(prototype);
+            }
+        }
+
+        public void FillObstaclePrototypes()
+        {
+            _prototypes = new List<ObstaclePrototype>();
+            AddPrototype(
+                new ObstaclePrototype()
+                {
+                    MinHeight = 0,
+                    MaxHeight = 0,
+                    MinScale = SCREEN_HEIGHT * 0.1f / 64f,
+                    MaxScale = SCREEN_HEIGHT * 0.4f / 64f,
+                    Surface = _drawDevice.CreateSurface(_game.Assets.LoadImage("PalmTree.png"))
+                }, 1);
+            AddPrototype(
+                new ObstaclePrototype()
+                {
+                    MinHeight = SCREEN_HEIGHT / 3,
+                    MaxHeight = SCREEN_HEIGHT,
+                    MinScale = 5f,
+                    MaxScale = 8f,
+                    Surface = _drawDevice.CreateSurface(_game.Assets.LoadImage("Bird.png"))
+                }, 3);
         }
 
         public void Stopped()

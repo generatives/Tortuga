@@ -14,8 +14,8 @@ namespace FlyingTortuga.Game.GameScreen
     {
         public Vector2 Position { get; private set; }
 
-        private Vector2 _velocity = new Vector2(200, 0);
-        private Vector2 _maxVelocity = new Vector2(100000, 500);
+        private Vector2 _velocity = new Vector2(300, 0);
+        private float _maxVelocity = 500;
         private Vector2 _acceleration = new Vector2(1, -500);
 
         private float _jumpSpeed = 300;
@@ -49,12 +49,14 @@ namespace FlyingTortuga.Game.GameScreen
             _timeSinceFlap += deltaTime;
 
             _velocity += _acceleration * deltaTime;
-            if (_velocity.X > _maxVelocity.X) _velocity = new Vector2(_maxVelocity.X, _velocity.Y);
-            if (_velocity.X < -_maxVelocity.X) _velocity = new Vector2(-_maxVelocity.X, _velocity.Y);
-            if (_velocity.Y > _maxVelocity.Y) _velocity = new Vector2(_velocity.X, _maxVelocity.Y);
-            if (_velocity.Y < -_maxVelocity.Y) _velocity = new Vector2(_velocity.X, -_maxVelocity.Y);
+            _velocity = Vector2.Clamp(_velocity, new Vector2(_velocity.X, -_maxVelocity), new Vector2(_velocity.X, _maxVelocity));
 
             Position += _velocity * deltaTime;
+            Position = Vector2.Clamp(Position, new Vector2(Position.X, -GameScreen.SCREEN_HEIGHT / 2f), new Vector2(Position.X, (GameScreen.SCREEN_HEIGHT / 2f) - Size.Y));
+            if(Position.Y == (GameScreen.SCREEN_HEIGHT / 2f) - Size.Y)
+            {
+                _velocity = new Vector2(_velocity.X, 0);
+            }
         }
 
         public void Render(DrawDevice drawDevice)

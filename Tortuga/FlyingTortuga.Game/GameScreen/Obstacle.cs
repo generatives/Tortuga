@@ -36,7 +36,7 @@ namespace FlyingTortuga.Game.GameScreen
 
         public void Render(DrawDevice drawDevice)
         {
-            drawDevice.Add(_surface, RectangleF.ZeroRect(16, 32), _rect, RgbaFloat.White);
+            drawDevice.Add(_surface, _rect);
         }
     }
 }

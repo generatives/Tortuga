@@ -29,6 +29,7 @@ namespace Tortuga.Graphics
         private ResourceFactory _factory;
 
         private DeviceBuffer _transfromBuffer;
+        public Matrix4x4 Transform { get; set; }
 
         private List<Surface> _surfaces;
 
@@ -190,9 +191,9 @@ void main()
 
         public void Begin(Matrix4x4 transform, Veldrid.Viewport? viewport = null)
         {
-            GraphicsDevice.UpdateBuffer(_transfromBuffer, 0, transform);
-
             _commandList.Begin();
+
+            Transform = transform;
 
             _commandList.SetFramebuffer(_swapchain.Framebuffer);
 
@@ -207,6 +208,7 @@ void main()
 
             _commandList.ClearColorTarget(0, RgbaFloat.CornflowerBlue);
             _commandList.ClearDepthStencil(1f);
+
             _commandList.SetPipeline(_pipeline);
             _commandList.SetGraphicsResourceSet(0, _cameraResourceSet);
         }
@@ -217,19 +219,18 @@ void main()
 
             _commandList.End();
             GraphicsDevice.SubmitCommands(_commandList);
-            GraphicsDevice.SwapBuffers(_swapchain);
-            GraphicsDevice.WaitForIdle();
         }
 
         private void DrawBatches()
         {
-            GraphicsDevice.UpdateBuffer(_vertexBuffer, (uint)0, ref _vertexArray[0], (uint)(Vertex.SizeInBytes * _length));
+            _commandList.UpdateBuffer(_vertexBuffer, (uint)0, ref _vertexArray[0], (uint)(Vertex.SizeInBytes * _length));
             _commandList.SetVertexBuffer(0, _vertexBuffer);
 
             uint offset = 0;
             foreach (var batch in _batches)
             {
-                GraphicsDevice.UpdateBuffer(_textureSizeBuffer, 0, new Vector2(batch.Surface.Width, batch.Surface.Height));
+                _commandList.UpdateBuffer(_transfromBuffer, 0, batch.Transform);
+                _commandList.UpdateBuffer(_textureSizeBuffer, 0, new Vector2(batch.Surface.Width, batch.Surface.Height));
                 _commandList.SetGraphicsResourceSet(1, batch.Surface.TextureResourceSet);
                 _commandList.Draw(batch.NumVertices, 1, offset, 0);
                 offset += batch.NumVertices;
@@ -290,7 +291,7 @@ void main()
         private void AddBatch(Surface surface, uint numVertices)
         {
             var lastBatch = _batches.LastOrDefault();
-            if (lastBatch.Surface != null && lastBatch.Surface == surface)
+            if (lastBatch.Surface != null && lastBatch.Surface == surface && lastBatch.Transform == Transform)
             {
                 lastBatch.NumVertices += numVertices;
                 _batches[_batches.Count - 1] = lastBatch;
@@ -300,7 +301,8 @@ void main()
                 _batches.Add(new Batch()
                 {
                     Surface = surface,
-                    NumVertices = numVertices
+                    NumVertices = numVertices,
+                    Transform = Transform
                 });
             }
             _length += numVertices;
