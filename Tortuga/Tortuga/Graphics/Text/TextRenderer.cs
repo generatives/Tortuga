@@ -14,18 +14,18 @@ namespace Tortuga.Graphics.Text
 {
     public class TextRenderer
     {
-        private BitmapFont _font;
+        public BitmapFont Font { get; private set; }
         private DrawDevice _device;
         private Surface[] _pageSurfaces;
 
         public TextRenderer(BitmapFont font, AssetLoader loader, DrawDevice device)
         {
-            _font = font;
+            Font = font;
             _device = device;
-            _pageSurfaces = new Surface[_font.Pages.Length];
-            for(var i = 0; i < _font.Pages.Length; i++)
+            _pageSurfaces = new Surface[Font.Pages.Length];
+            for(var i = 0; i < Font.Pages.Length; i++)
             {
-                var page = _font.Pages[i];
+                var page = Font.Pages[i];
                 var image = loader.LoadImage(page.FileName);
                 _pageSurfaces[i] = _device.CreateSurface(image);
             }
@@ -33,19 +33,29 @@ namespace Tortuga.Graphics.Text
 
         public void DrawText(string text, Vector2 position)
         {
-            DrawText(text, position, Vector2.One);
+            DrawText(text, position, Vector2.One, RgbaFloat.White);
         }
+
+        public void DrawText(string text, Vector2 position, RgbaFloat color)
+        {
+            DrawText(text, position, Vector2.One, color);
+        }
+
         public void DrawText(string text, Vector2 position, Vector2 scale)
         {
+            DrawText(text, position, scale, RgbaFloat.White);
+        }
+
+        public void DrawText(string text, Vector2 position, Vector2 scale, RgbaFloat color)
+        {
             char previousCharacter = ' ';
-            var size = _font.MeasureFont(text);
 
             foreach (char character in text)
             {
                 switch (character)
                 {
                     case '\n':
-                        position = new Vector2(0, _font.LineHeight);
+                        position = new Vector2(0, Font.LineHeight);
                         break;
                     case '\r':
                         break;
@@ -53,10 +63,10 @@ namespace Tortuga.Graphics.Text
                         Character data;
                         int kerning;
 
-                        data = _font[character];
-                        kerning = _font.GetKerning(previousCharacter, character);
+                        data = Font[character];
+                        kerning = Font.GetKerning(previousCharacter, character);
 
-                        DrawCharacter(data, position.X + data.Offset.X + kerning, position.Y + data.Offset.Y);
+                        DrawCharacter(data, position.X + data.Offset.X + kerning, position.Y + data.Offset.Y, scale, color);
 
                         position += new Vector2(data.XAdvance + kerning, 0);
                         break;
@@ -66,10 +76,14 @@ namespace Tortuga.Graphics.Text
             }
         }
 
-        private void DrawCharacter(Character character, float x, float y)
+        private void DrawCharacter(Character character, float x, float y, Vector2 scale, RgbaFloat color)
         {
             var surface = _pageSurfaces[character.TexturePage];
-            _device.Add(surface, character.Bounds, new RectangleF(x, y, character.Bounds.Width, character.Bounds.Height), RgbaFloat.White);
+            _device.Add(
+                surface,
+                character.Bounds,
+                new RectangleF(x * scale.X, y * scale.Y, character.Bounds.Width * scale.X, character.Bounds.Height * scale.Y),
+                color);
         }
     }
 }

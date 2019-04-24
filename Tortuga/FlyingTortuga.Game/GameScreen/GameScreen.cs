@@ -31,7 +31,7 @@ namespace FlyingTortuga.Game.GameScreen
 
         private GameState _state = GameState.WAITING;
 
-        private float PLAYER_DEATH_WAIT_TIME = 0.25f;
+        private float PLAYER_DEATH_WAIT_TIME = 0.5f;
         private float _remainingWaitTime;
 
         public static int SCREEN_WIDTH = 1280;
@@ -106,7 +106,6 @@ namespace FlyingTortuga.Game.GameScreen
         {
             _drawDevice.Begin(_viewportManager.GetScalingTransform(), _viewportManager.Viewport);
             _drawDevice.Add(_background, new RectangleF(-(SCREEN_WIDTH / 2f), -(SCREEN_HEIGHT / 2f), SCREEN_WIDTH, SCREEN_HEIGHT));
-            _textRenderer.DrawText($"Distance: {(int)Player.Position.X / 16}", new Vector2(-(SCREEN_WIDTH / 2) + 10, (SCREEN_HEIGHT / 2) - 40));
 
             _drawDevice.Transform = Matrix4x4.CreateTranslation(-Player.Position.X - SCREEN_WIDTH * 0.4f, 0, 0) *
                 _viewportManager.GetScalingTransform();
@@ -115,6 +114,22 @@ namespace FlyingTortuga.Game.GameScreen
             {
                 obstacle.Render(_drawDevice);
             }
+
+            _drawDevice.Transform = _viewportManager.GetScalingTransform();
+
+            if(_state == GameState.WAITING)
+            {
+                _textRenderer.DrawText("Touch to Start", new Vector2(-30, 0), new Vector2(2, 2));
+            }
+            else if(_state == GameState.DIED)
+            {
+                _textRenderer.DrawText($"Final Distance: {(int)Player.Position.X / 16}", new Vector2(-30, 0), new Vector2(2, 2));
+            }
+            else
+            {
+                _textRenderer.DrawText($"Distance: {(int)Player.Position.X / 16}", new Vector2(-(SCREEN_WIDTH / 2) + 10, (SCREEN_HEIGHT / 2) - 40));
+            }
+
             _drawDevice.End();
 
             _game.Window.GraphicsDevice.SwapBuffers(_game.Window.MainSwapchain);

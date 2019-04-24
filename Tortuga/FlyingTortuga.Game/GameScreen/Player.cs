@@ -16,7 +16,7 @@ namespace FlyingTortuga.Game.GameScreen
 
         private Vector2 _velocity = new Vector2(300, 0);
         private float _maxVelocity = 500;
-        private Vector2 _acceleration = new Vector2(1, -500);
+        private Vector2 _acceleration = new Vector2(3, -500);
 
         private float _jumpSpeed = 300;
 
