@@ -12,6 +12,26 @@ using Tortuga.Assets;
 
 namespace Tortuga.Graphics.Text
 {
+    [Flags]
+    public enum TextAlignment
+    {
+        BOTTOM = 0,
+        TOP = 1,
+        MIDDLE = 2,
+        LEFT = 0,
+        RIGHT = 4,
+        CENTER = 8,
+        TOP_MIDDLE = TOP | MIDDLE,
+        TOP_LEFT = TOP | LEFT,
+        TOP_RIGHT = TOP | RIGHT,
+        CENTER_MIDDLE = CENTER | MIDDLE,
+        CENTER_LEFT = CENTER | LEFT,
+        CENTER_RIGHT = CENTER | RIGHT,
+        BOTTOM_MIDDLE = BOTTOM | MIDDLE,
+        BOTTOM_LEFT = BOTTOM | LEFT,
+        BOTTOM_RIGHT = BOTTOM | RIGHT
+    }
+
     public class TextRenderer
     {
         public BitmapFont Font { get; private set; }
@@ -31,31 +51,42 @@ namespace Tortuga.Graphics.Text
             }
         }
 
-        public void DrawText(string text, Vector2 position)
+        private bool TextAlignemntContains(TextAlignment flags, TextAlignment test)
         {
-            DrawText(text, position, Vector2.One, RgbaFloat.White);
+            return (flags & test) == test;
         }
 
-        public void DrawText(string text, Vector2 position, RgbaFloat color)
+        public void DrawText(string text, Vector2 position, Vector2? scaleParam = null, RgbaFloat? colorParam = null, TextAlignment textAlignment = TextAlignment.BOTTOM_LEFT)
         {
-            DrawText(text, position, Vector2.One, color);
-        }
+            var scale = scaleParam.HasValue ? scaleParam.Value : Vector2.One;
+            var color = colorParam.HasValue ? colorParam.Value : RgbaFloat.White;
 
-        public void DrawText(string text, Vector2 position, Vector2 scale)
-        {
-            DrawText(text, position, scale, RgbaFloat.White);
-        }
-
-        public void DrawText(string text, Vector2 position, Vector2 scale, RgbaFloat color)
-        {
             char previousCharacter = ' ';
+            var size = Font.MeasureFont(text);
+            if(TextAlignemntContains(textAlignment, TextAlignment.MIDDLE))
+            {
+                position -= new Vector2(size.Width / 2f, 0);
+            }
+            else if(TextAlignemntContains(textAlignment, TextAlignment.RIGHT))
+            {
+                position -= new Vector2(size.Width, 0);
+            }
+
+            if (TextAlignemntContains(textAlignment, TextAlignment.CENTER))
+            {
+                position -= new Vector2(0, size.Height / 2f);
+            }
+            else if (TextAlignemntContains(textAlignment, TextAlignment.TOP))
+            {
+                position -= new Vector2(0, size.Height);
+            }
 
             foreach (char character in text)
             {
                 switch (character)
                 {
                     case '\n':
-                        position = new Vector2(0, Font.LineHeight);
+                        position += new Vector2(0, Font.LineHeight);
                         break;
                     case '\r':
                         break;

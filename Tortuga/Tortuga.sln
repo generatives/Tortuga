@@ -23,9 +23,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FlyingTortuga", "FlyingTortuga", "{1C9A5AE0-E5D1-4CBA-8466-A2C5D4B9740D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlyingTortuga.DesktopApp", "FlyingTortuga.DesktopApp\FlyingTortuga.DesktopApp.csproj", "{1F3CE01B-CCA5-4436-AEEA-E3015861D9F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlyingTortuga.DesktopApp", "FlyingTortuga.DesktopApp\FlyingTortuga.DesktopApp.csproj", "{1F3CE01B-CCA5-4436-AEEA-E3015861D9F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlyingTortuga.Game", "FlyingTortuga.Game\FlyingTortuga.Game.csproj", "{DE37F631-20FC-4D15-A3D3-117599A9C4F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlyingTortuga.Game", "FlyingTortuga.Game\FlyingTortuga.Game.csproj", "{DE37F631-20FC-4D15-A3D3-117599A9C4F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

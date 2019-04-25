@@ -119,15 +119,15 @@ namespace FlyingTortuga.Game.GameScreen
 
             if(_state == GameState.WAITING)
             {
-                _textRenderer.DrawText("Touch to Start", new Vector2(-30, 0), new Vector2(2, 2));
+                _textRenderer.DrawText("Touch to Start", Vector2.Zero, new Vector2(2, 2), textAlignment: TextAlignment.CENTER_MIDDLE);
             }
             else if(_state == GameState.DIED)
             {
-                _textRenderer.DrawText($"Final Distance: {(int)Player.Position.X / 16}", new Vector2(-30, 0), new Vector2(2, 2));
+                _textRenderer.DrawText($"Final Distance: {(int)Player.Position.X / 16}", Vector2.Zero, new Vector2(2, 2), textAlignment: TextAlignment.CENTER_MIDDLE);
             }
             else
             {
-                _textRenderer.DrawText($"Distance: {(int)Player.Position.X / 16}", new Vector2(-(SCREEN_WIDTH / 2) + 10, (SCREEN_HEIGHT / 2) - 40));
+                _textRenderer.DrawText($"Distance: {(int)Player.Position.X / 16}", new Vector2(-(SCREEN_WIDTH / 2) + 10, (SCREEN_HEIGHT / 2) - 10), textAlignment: TextAlignment.TOP_LEFT);
             }
 
             _drawDevice.End();
