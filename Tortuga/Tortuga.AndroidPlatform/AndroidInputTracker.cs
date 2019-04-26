@@ -19,6 +19,7 @@ namespace Tortuga.AndroidPlatform
         public Vector2 PointerPosition { get; private set; }
         public Vector2 PointerDelta { get => PointerPosition - _previousPointerPosition; }
         public bool PointerDown { get; private set; }
+        public bool PointerPressed { get; private set; }
         public Vector2 MousePosition { get; private set; }
         public Vector2 MouseDelta { get; private set; }
 
@@ -26,12 +27,15 @@ namespace Tortuga.AndroidPlatform
 
         public bool ProcessMotionEvent(MotionEvent e)
         {
-            if(e.Action == MotionEventActions.Down && !_currentPointerId.HasValue)
+            PointerPressed = false;
+
+            if (e.Action == MotionEventActions.Down && !_currentPointerId.HasValue)
             {
                 _currentPointerId = e.GetPointerId(0);
                 PointerPosition = new Vector2(e.GetX(0), e.GetY(0));
                 _previousPointerPosition = PointerPosition;
                 PointerDown = true;
+                PointerPressed = true;
             }
             else if(e.Action == MotionEventActions.Up && _currentPointerId.HasValue)
             {

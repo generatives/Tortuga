@@ -7,6 +7,7 @@ using Tortuga.Geometry;
 using Tortuga.Platform;
 using Veldrid;
 using Tortuga.Graphics.Resources;
+using Tortuga.Audio;
 
 namespace FlyingTortuga.Game.GameScreen
 {
@@ -24,14 +25,17 @@ namespace FlyingTortuga.Game.GameScreen
 
         private IInputTracker _inputTracker;
         private SpriteSheet _sheet;
+        private ISound _hop;
+        private ISound _fail;
         private float _timeSinceFlap;
         private float _wingsDownTime = 0.1f;
 
         public bool Go { get; set; }
 
-        public Player(SpriteSheet sheet, IInputTracker input)
+        public Player(SpriteSheet sheet, ISound hop, IInputTracker input)
         {
             _sheet = sheet;
+            _hop = hop;
             _inputTracker = input;
             _timeSinceFlap = _wingsDownTime + 1;
         }
@@ -40,10 +44,11 @@ namespace FlyingTortuga.Game.GameScreen
         {
             if (!Go) return;
 
-            if(_inputTracker.GetKeyDown(TKey.Space))
+            if(_inputTracker.PointerPressed)
             {
                 _velocity = new Vector2(_velocity.X, _jumpSpeed);
                 _timeSinceFlap = 0;
+                _hop.Play();
             }
 
             _timeSinceFlap += deltaTime;

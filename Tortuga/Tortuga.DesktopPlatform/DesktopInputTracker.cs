@@ -17,7 +17,8 @@ namespace Tortuga.DesktopPlatform
 
         public Vector2 PointerPosition { get => MousePosition; }
         public Vector2 PointerDelta { get => MouseDelta; }
-        public bool PointerDown { get => GetMouseButtonDown(TMouseButton.Button1); }
+        public bool PointerDown { get => GetMouseButtonDown(TMouseButton.Left); }
+        public bool PointerPressed { get => GetMouseButtonPressed(TMouseButton.Left); }
         public Vector2 MousePosition { get; private set; }
         public Vector2 MouseDelta { get; private set; }
 

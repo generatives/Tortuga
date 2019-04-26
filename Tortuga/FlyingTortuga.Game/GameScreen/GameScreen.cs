@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using Tortuga.Audio;
 using Tortuga.Geometry;
 using Tortuga.Graphics;
 using Tortuga.Graphics.Resources;
@@ -17,6 +18,7 @@ namespace FlyingTortuga.Game.GameScreen
         private ViewportManager _viewportManager;
 
         private Surface _background;
+        private ISound _failSound;
         private TextRenderer _textRenderer;
 
         public Player Player { get; private set; }
@@ -48,11 +50,13 @@ namespace FlyingTortuga.Game.GameScreen
             _background = _drawDevice.CreateSurface(game.Assets.LoadImage("Background.png"));
             _textRenderer = new TextRenderer(game.Assets.LoadFont(BitmapFont.DefaultFontName), game.Assets, _drawDevice);
 
+            var playerJumpSound = game.Assets.LoadSound("hop.wav");
+            _failSound = game.Assets.LoadSound("fail.wav");
             var playerImage = game.Assets.LoadImage("FlyingTortuga.png");
             var playerSurface = _drawDevice.CreateSurface(playerImage);
             var spriteSheet = SpriteSheet.CreateGrid(playerSurface, 16, 16, 2, false);
 
-            Player = new Player(spriteSheet, _game.Window.InputTracker);
+            Player = new Player(spriteSheet, playerJumpSound, _game.Window.InputTracker);
             _obstacles = new List<Obstacle>();
 
             FillObstaclePrototypes();
@@ -73,7 +77,7 @@ namespace FlyingTortuga.Game.GameScreen
         {
             if(_state == GameState.WAITING)
             {
-                _state = _game.Window.InputTracker.GetKeyDown(Tortuga.Platform.TKey.Space) ? GameState.STARTED : GameState.WAITING;
+                _state = _game.Window.InputTracker.PointerPressed ? GameState.STARTED : GameState.WAITING;
                 if(_state == GameState.STARTED)
                 {
                     Player.Go = true;
@@ -152,6 +156,7 @@ namespace FlyingTortuga.Game.GameScreen
             _state = GameState.DIED;
             Player.Go = false;
             _remainingWaitTime = PLAYER_DEATH_WAIT_TIME;
+            _failSound.Play();
         }
 
         public void AddPrototype(ObstaclePrototype prototype, int num)

@@ -26,7 +26,14 @@ namespace Tortuga.AndroidPlatform
 
         public Stream LoadAsset(string key)
         {
-            return Assets.Open(key);
+            try
+            {
+                return Assets.Open(key);
+            }
+            catch(Java.IO.FileNotFoundException)
+            {
+                return null;
+            }
         }
     }
 }

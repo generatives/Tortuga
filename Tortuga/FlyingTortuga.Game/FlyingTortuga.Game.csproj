@@ -8,17 +8,19 @@
     <None Remove="Assets\Background.png" />
     <None Remove="Assets\Bird.png" />
     <None Remove="Assets\Coral.png" />
+    <None Remove="Assets\fail.wav" />
     <None Remove="Assets\FlyingTortuga.png" />
+    <None Remove="Assets\hop.wav" />
     <None Remove="Assets\PalmTree.png" />
     <None Remove="Assets\Rock.png" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\Bird.png" />
-    <Content Include="Assets\Coral.png" />
+    <EmbeddedResource Include="Assets\fail.wav" />
     <EmbeddedResource Include="Assets\FlyingTortuga.png" />
+    <EmbeddedResource Include="Assets\hop.wav" />
     <EmbeddedResource Include="Assets\PalmTree.png" />
-    <EmbeddedResource Include="Assets\Rock.png" />
   </ItemGroup>
 
   <ItemGroup>

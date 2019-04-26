@@ -10,6 +10,8 @@ namespace Tortuga.Platform
         Vector2 PointerPosition { get; }
         Vector2 PointerDelta { get; }
         bool PointerDown { get; }
+
+        bool PointerPressed { get; }
         Vector2 MousePosition { get; }
         Vector2 MouseDelta { get; }
 

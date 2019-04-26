@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlyingTortuga.DesktopApp", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FlyingTortuga.Game", "FlyingTortuga.Game\FlyingTortuga.Game.csproj", "{DE37F631-20FC-4D15-A3D3-117599A9C4F3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlyingTortuga.AndroidApp", "FlyingTortuga.AndroidApp\FlyingTortuga.AndroidApp.csproj", "{85E93872-E0ED-4C7A-8414-049CDDF99C9B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,12 @@ Global
 		{DE37F631-20FC-4D15-A3D3-117599A9C4F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE37F631-20FC-4D15-A3D3-117599A9C4F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE37F631-20FC-4D15-A3D3-117599A9C4F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85E93872-E0ED-4C7A-8414-049CDDF99C9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85E93872-E0ED-4C7A-8414-049CDDF99C9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85E93872-E0ED-4C7A-8414-049CDDF99C9B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{85E93872-E0ED-4C7A-8414-049CDDF99C9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85E93872-E0ED-4C7A-8414-049CDDF99C9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85E93872-E0ED-4C7A-8414-049CDDF99C9B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +88,7 @@ Global
 		{B511F26E-0019-44AB-BBA9-32E50772794E} = {710D6E14-BBCB-454D-948F-425F4B408D01}
 		{1F3CE01B-CCA5-4436-AEEA-E3015861D9F2} = {1C9A5AE0-E5D1-4CBA-8466-A2C5D4B9740D}
 		{DE37F631-20FC-4D15-A3D3-117599A9C4F3} = {1C9A5AE0-E5D1-4CBA-8466-A2C5D4B9740D}
+		{85E93872-E0ED-4C7A-8414-049CDDF99C9B} = {1C9A5AE0-E5D1-4CBA-8466-A2C5D4B9740D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9799F898-4322-4633-A5EE-619849FCE243}
