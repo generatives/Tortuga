@@ -63,22 +63,23 @@ namespace Tortuga.Graphics.Text
 
             char previousCharacter = ' ';
             var size = Font.MeasureFont(text);
+            var scaled = new Vector2(size.Width * scale.X, size.Height * scale.Y);
             if(TextAlignemntContains(textAlignment, TextAlignment.MIDDLE))
             {
-                position -= new Vector2(size.Width / 2f, 0);
+                position -= new Vector2(scaled.X / 2f, 0);
             }
             else if(TextAlignemntContains(textAlignment, TextAlignment.RIGHT))
             {
-                position -= new Vector2(size.Width, 0);
+                position -= new Vector2(scaled.X, 0);
             }
 
             if (TextAlignemntContains(textAlignment, TextAlignment.CENTER))
             {
-                position -= new Vector2(0, size.Height / 2f);
+                position -= new Vector2(0, scaled.Y / 2f);
             }
             else if (TextAlignemntContains(textAlignment, TextAlignment.TOP))
             {
-                position -= new Vector2(0, size.Height);
+                position -= new Vector2(0, scaled.Y);
             }
 
             foreach (char character in text)
@@ -86,7 +87,7 @@ namespace Tortuga.Graphics.Text
                 switch (character)
                 {
                     case '\n':
-                        position += new Vector2(0, Font.LineHeight);
+                        position += new Vector2(0, Font.LineHeight * scale.Y);
                         break;
                     case '\r':
                         break;
@@ -97,9 +98,9 @@ namespace Tortuga.Graphics.Text
                         data = Font[character];
                         kerning = Font.GetKerning(previousCharacter, character);
 
-                        DrawCharacter(data, position.X + data.Offset.X + kerning, position.Y + data.Offset.Y, scale, color);
+                        DrawCharacter(data, position.X + (data.Offset.X + kerning) * scale.X, position.Y + data.Offset.Y * scale.Y, scale, color);
 
-                        position += new Vector2(data.XAdvance + kerning, 0);
+                        position += (new Vector2(data.XAdvance + kerning, 0)) * scale.Y;
                         break;
                 }
 
@@ -113,7 +114,7 @@ namespace Tortuga.Graphics.Text
             _device.Add(
                 surface,
                 character.Bounds,
-                new RectangleF(x * scale.X, y * scale.Y, character.Bounds.Width * scale.X, character.Bounds.Height * scale.Y),
+                new RectangleF(x, y, character.Bounds.Width * scale.X, character.Bounds.Height * scale.Y),
                 color);
         }
     }

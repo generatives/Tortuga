@@ -131,7 +131,7 @@ namespace FlyingTortuga.Game.GameScreen
             }
             else
             {
-                _textRenderer.DrawText($"Distance: {(int)Player.Position.X / 16}", new Vector2(-(SCREEN_WIDTH / 2) + 10, (SCREEN_HEIGHT / 2) - 10), textAlignment: TextAlignment.TOP_LEFT);
+                _textRenderer.DrawText($"{(int)Player.Position.X / 16}", new Vector2(0, SCREEN_HEIGHT * 0.25f), new Vector2(2, 2), textAlignment: TextAlignment.CENTER_MIDDLE);
             }
 
             _drawDevice.End();
