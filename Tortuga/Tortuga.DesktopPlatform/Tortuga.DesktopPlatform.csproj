@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="SharpAudio" Version="0.1.0-beta1-0016-gf1593d4dc3" />
     <PackageReference Include="SharpAudio.Util" Version="0.1.0-beta1-0016-gf1593d4dc3" />
-    <PackageReference Include="Veldrid.StartupUtilities" Version="4.6.0" />
+    <PackageReference Include="Veldrid.StartupUtilities" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
