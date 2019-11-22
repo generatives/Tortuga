@@ -7,10 +7,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Tortuga.DesktopPlatform\Tortuga.DesktopPlatform.csproj" />
+    <ProjectReference Include="..\Tortuga.Tilemaps\Tortuga.Tilemaps.csproj" />
     <ProjectReference Include="..\Tortuga\Tortuga.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\Bird.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\song.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

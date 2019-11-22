@@ -14,6 +14,8 @@ using Veldrid.ImageSharp;
 using Tortuga.Graphics.Text;
 using Cyotek.Drawing.BitmapFont;
 using Tortuga.Assets;
+using Tortuga.Graphics.Resources;
+using Tortuga.Tilemaps;
 
 namespace OpenSkiesDemo
 {
@@ -28,21 +30,15 @@ namespace OpenSkiesDemo
 
     class Game
     {
-        private Vector2 objectPosition;
         private IWindow _window;
         private AssetLoader _assetLoader;
         private double previousElapsed;
         private BitmapFont font;
         private TextRenderer textRenderer;
-        private Stopwatch sw;
-        private DrawDevice drawDevice;
-        private ViewportManager viewport;
-        private Vertex[] triangleVertices = new Vertex[]
-            {
-                new Vertex(new Vector2(0, 0), RgbaFloat.White, new Vector2(0, 1)),
-                new Vertex(new Vector2(10, 20), RgbaFloat.White, new Vector2(0.5f, 0)),
-                new Vertex(new Vector2(20, 0), RgbaFloat.White, new Vector2(1, 1))
-            };
+        private Tilemap _tileMap;
+        private Stopwatch _frameTimer;
+        private DrawDevice _drawDevice;
+        private ViewportManager _viewport;
 
         public void Run()
         {
@@ -74,10 +70,10 @@ namespace OpenSkiesDemo
             _window.Tick += Update;
             _window.Resized += _window_Resized;
 
-            viewport = new ViewportManager(1280, 720);
+            _viewport = new ViewportManager(1280, 720);
 
-            sw = Stopwatch.StartNew();
-            double previousElapsed = sw.Elapsed.TotalSeconds;
+            _frameTimer = Stopwatch.StartNew();
+            double previousElapsed = _frameTimer.Elapsed.TotalSeconds;
 
             var task = _window.Run();
             Task.WaitAll(task);
@@ -85,76 +81,53 @@ namespace OpenSkiesDemo
 
         private void _window_Resized()
         {
-            viewport.WindowChanged(_window.Width, _window.Height);
+            _viewport.WindowChanged(_window.Width, _window.Height);
         }
 
         public void LoadResources()
         {
-            drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
+            _drawDevice = new DrawDevice(_window.GraphicsDevice, _window.MainSwapchain);
 
             font = _assetLoader.LoadFont(BitmapFont.DefaultFontName);
-            textRenderer = new TextRenderer(font, _assetLoader, drawDevice);
+            textRenderer = new TextRenderer(font, _assetLoader, _drawDevice);
+
+            var image = _assetLoader.LoadImage("Bird.png");
+            var surface = _drawDevice.CreateSurface(image);
+            var spriteSheet = SpriteSheet.CreateGrid(surface, 8, 8, 4, true);
+            _tileMap = new Tilemap()
+            {
+                Layers = new TilemapLayer[]
+                {
+                    new TilemapLayer()
+                    {
+                        Tiles = new Tile[,]
+                        {
+                            { new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] } },
+                            { new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] } },
+                            { new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] } }
+                        },
+                        TileWidth = 8,
+                        TileHeight = 8
+                    }
+                }
+            };
         }
 
         public void Update()
         {
-            double newElapsed = sw.Elapsed.TotalSeconds;
-            sw.Restart();
+            double newElapsed = _frameTimer.Elapsed.TotalSeconds;
+            _frameTimer.Restart();
             float deltaSeconds = (float)(newElapsed - previousElapsed);
 
-            var change = Vector2.Zero;
-            if (_window.InputTracker.GetKey(TKey.A))
-            {
-                change += new Vector2(-1, 0);
-            }
+            var vp = _viewport.Viewport;
+            _drawDevice.Begin(_viewport.GetScalingTransform(), vp);
 
-            if (_window.InputTracker.GetKey(TKey.D))
-            {
-                change += new Vector2(1, 0);
-            }
+            TilemapRenderer.Render(_drawDevice, _tileMap);
 
-            if (_window.InputTracker.GetKey(TKey.W))
-            {
-                change += new Vector2(0, 1);
-            }
+            _drawDevice.End();
 
-            if (_window.InputTracker.GetKey(TKey.S))
-            {
-                change += new Vector2(0, -1);
-            }
-
-            objectPosition += change;
-
-            //if (InputTracker.GetKey(Key.E))
-            //{
-            //    _camera.GameObject.Transform.Rotation += 0.3f;
-            //}
-
-            //if (InputTracker.GetKey(Key.Q))
-            //{
-            //    _camera.GameObject.Transform.Rotation += -0.3f;
-            //}
-
-            //if (InputTracker.GetKey(Key.Z))
-            //{
-            //    _camera.Zoom += new Vector2(0.05f, 0.05f);
-            //}
-
-            //if (InputTracker.GetKey(Key.X))
-            //{
-            //    _camera.Zoom += new Vector2(-0.05f, -0.05f);
-            //}
-
-            var vp = viewport.Viewport;
-            drawDevice.Begin(viewport.GetScalingTransform(), vp);
-            drawDevice.Add(drawDevice.WhitePixel, RectangleF.Square(1), new RectangleF(-viewport.VirtualWidth / 2f, -viewport.VirtualHeight / 2, viewport.VirtualWidth, viewport.VirtualHeight), RgbaFloat.Black);
-            drawDevice.Add(drawDevice.Grid, triangleVertices);
-            drawDevice.Add(drawDevice.Grid, triangleVertices, Matrix3x2.CreateRotation(0.5f) * Matrix3x2.CreateTranslation(new Vector2(50, 50)));
-            drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new RectangleF(-50, 0, 30f, 30f), RgbaFloat.Red);
-            drawDevice.Add(drawDevice.Grid, RectangleF.Square(1), new Vector2(30f, 30f), Matrix3x2.CreateTranslation(100, 0), RgbaFloat.Yellow);
-
-            textRenderer.DrawText("Rendering Text!", new Vector2(-250, 30), new Vector2(5, 5));
-            drawDevice.End();
+            _window.GraphicsDevice.SwapBuffers(_window.MainSwapchain);
+            _window.GraphicsDevice.WaitForIdle();
         }
     }
 }

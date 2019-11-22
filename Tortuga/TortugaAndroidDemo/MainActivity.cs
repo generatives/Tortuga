@@ -77,6 +77,9 @@ namespace OpenSkiesAndroidDemo
             _drawDevice.Add(_drawDevice.Grid, RectangleF.Square(1), new RectangleF(-50, 0, 30f, 30f), RgbaFloat.CornflowerBlue);
             _drawDevice.Add(_drawDevice.Grid, RectangleF.Square(1), new Vector2(30f, 30f), Matrix3x2.CreateTranslation(100, 0), RgbaFloat.CornflowerBlue);
             _drawDevice.End();
+
+            _window.GraphicsDevice.SwapBuffers(_window.MainSwapchain);
+            _window.GraphicsDevice.WaitForIdle();
         }
 
         protected override void OnPause()

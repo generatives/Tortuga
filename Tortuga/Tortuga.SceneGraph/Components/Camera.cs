@@ -20,13 +20,9 @@ namespace Tortuga.SceneGraph.Components
         {
             var position = GameObject.Transform.Position;
             var rotation = GameObject.Transform.Rotation;
-            var viewport = Ultraviolet.UltravioletContext.DemandCurrent().GetGraphics().GetViewport();
-            var origin = new Vector2(viewport.Width / 2f, viewport.Height / 2f);
             var matrix = Matrix4x4.CreateTranslation(-position.X, -position.Y, 0) *
-                Matrix4x4.CreateTranslation(-origin.X, -origin.Y, 0f) *
                 Matrix4x4.CreateRotationZ(-rotation * (2f * (float)Math.PI / 360f)) *
-                Matrix4x4.CreateScale(Zoom.X, Zoom.Y, 1) *
-                Matrix4x4.CreateTranslation(origin.X, origin.Y, 0f);
+                Matrix4x4.CreateScale(Zoom.X, Zoom.Y, 1);
             return matrix;
         }
     }

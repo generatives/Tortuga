@@ -1,14 +1,12 @@
-﻿using Tortuga.Components;
-using Tortuga.Graphics;
+﻿using Tortuga.SceneGraph.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Primitives2D;
-using Tortuga.SceneGraph;
-using Tortuga.Graphics;
 using Veldrid;
+using Tortuga.Graphics;
 
 namespace Tortuga.SceneGraph
 {
@@ -19,20 +17,14 @@ namespace Tortuga.SceneGraph
 
         private List<SceneSystem> _systems;
 
-        //private List<IRenderer> _renderers;
-
         public bool IsRunning { get; private set; }
 
         public Camera Camera { get; private set; }
-
-        public DrawBuffer _spriteBatch { get; private set; }
 
         public Scene()
         {
             _gameObjects = new List<GameObject>();
             _systems = new List<SceneSystem>();
-            _spriteBatch = DrawBuffer.Create();
-            //_renderers = new List<IRenderer>();
         }
 
         public void AddSystem(SceneSystem system)
@@ -131,21 +123,15 @@ namespace Tortuga.SceneGraph
             }
         }
 
-        public void Render(Ultraviolet.IUltravioletGraphics graphics, float time)
+        public void Render(DrawDevice drawDevice, float time)
         {
-            if (Camera == null) return;
-            
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, Camera.GetViewMatrix());
-
             for (int i = 0; i < _gameObjects.Count; i++)
             {
-                _gameObjects[i].Render(_spriteBatch, time);
+                _gameObjects[i].Render(drawDevice, time);
             }
 
-            _spriteBatch.DrawLine(-100, 0, 100, 0, RgbaFloat.Red);
-            _spriteBatch.DrawLine(0, -100, 0, 100, RgbaFloat.Red);
-
-            _spriteBatch.End();
+            drawDevice.DrawLine(-100, 0, 100, 0, RgbaFloat.Red);
+            drawDevice.DrawLine(0, -100, 0, 100, RgbaFloat.Red);
         }
     }
 }
