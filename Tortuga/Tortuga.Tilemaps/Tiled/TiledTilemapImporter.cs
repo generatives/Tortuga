@@ -20,7 +20,7 @@ namespace Tortuga.Tilemaps.Tiled
             var map = new TmxMap(stream);
             var tMapWidth = map.Width;
             var tMapHeight = map.Height;
-            var tileRect = new Dictionary<int, Rectangle>();
+            var tileRect = new Dictionary<int, RectangleF>();
             var idSet = new Dictionary<int, Tileset>();
             var layerID = new List<int[,]>();
 
@@ -47,7 +47,7 @@ namespace Tortuga.Tilemaps.Tiled
                 {
                     for (var w = wStart; w < wEnd; w += wInc)
                     {
-                        var rect = new Rectangle(w, h, ts.TileWidth, ts.TileHeight);
+                        var rect = new RectangleF(w, h, ts.TileWidth, ts.TileHeight);
                         idSet.Add(id, tileset);
                         tileRect.Add(id, rect);
                         id += 1;

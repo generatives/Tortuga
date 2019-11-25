@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <ApplicationIcon />
+    <OutputType>Exe</OutputType>
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SimultaneousCore\SimultaneousCore.csproj" />
+    <ProjectReference Include="..\SimultaneousLiteNetLib\SimultaneousLiteNetLib.csproj" />
+    <ProjectReference Include="..\Tortuga.DesktopPlatform\Tortuga.DesktopPlatform.csproj" />
+    <ProjectReference Include="..\Tortuga\Tortuga.csproj" />
+  </ItemGroup>
+
+</Project>

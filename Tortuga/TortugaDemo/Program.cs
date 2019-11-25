@@ -36,6 +36,7 @@ namespace OpenSkiesDemo
         private BitmapFont font;
         private TextRenderer textRenderer;
         private Tilemap _tileMap;
+        private TilemapRenderer _tilemapRenderer;
         private Stopwatch _frameTimer;
         private DrawDevice _drawDevice;
         private ViewportManager _viewport;
@@ -92,8 +93,12 @@ namespace OpenSkiesDemo
             textRenderer = new TextRenderer(font, _assetLoader, _drawDevice);
 
             var image = _assetLoader.LoadImage("Bird.png");
-            var surface = _drawDevice.CreateSurface(image);
-            var spriteSheet = SpriteSheet.CreateGrid(surface, 8, 8, 4, true);
+            var tileset = new Tileset()
+            {
+                Image = image
+            };
+            var tile1 = new Tile() { Tileset = tileset, SourceRectangle = new RectangleF(0, 0, 8, 8) };
+            var tile2 = new Tile() { Tileset = tileset, SourceRectangle = new RectangleF(0, 8, 8, 8) };
             _tileMap = new Tilemap()
             {
                 Layers = new TilemapLayer[]
@@ -102,15 +107,20 @@ namespace OpenSkiesDemo
                     {
                         Tiles = new Tile[,]
                         {
-                            { new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] } },
-                            { new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] } },
-                            { new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] }, new Tile() { SubSurface = spriteSheet[1] } }
+                            { tile2, tile1, tile2 },
+                            { tile1, tile2, tile1 },
+                            { tile2, tile1, tile2 }
                         },
                         TileWidth = 8,
                         TileHeight = 8
                     }
+                },
+                Tilesets = new Tileset[]
+                {
+                    tileset
                 }
             };
+            _tilemapRenderer = new TilemapRenderer(_drawDevice, _tileMap);
         }
 
         public void Update()
@@ -120,9 +130,9 @@ namespace OpenSkiesDemo
             float deltaSeconds = (float)(newElapsed - previousElapsed);
 
             var vp = _viewport.Viewport;
-            _drawDevice.Begin(_viewport.GetScalingTransform(), vp);
+            _drawDevice.Begin(_viewport.GetScalingTransform() * Matrix4x4.CreateScale(5), vp);
 
-            TilemapRenderer.Render(_drawDevice, _tileMap);
+            _tilemapRenderer.Render();
 
             _drawDevice.End();
 
