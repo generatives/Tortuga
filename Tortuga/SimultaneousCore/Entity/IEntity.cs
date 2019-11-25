@@ -7,8 +7,8 @@ namespace SimultaneousCore.Entity
     {
         Guid Id { get; }
         EntityRole Role { get; }
-        void SendFrameRecord(FrameCommands envelope);
-        void SendDeltaEnvelope(DeltaEnvelope deltaEnv);
+        void RecieveFrameRecord(FrameCommands envelope);
+        void RecieveDeltaEnvelope(DeltaEnvelope deltaEnv);
     }
 
     [Flags]

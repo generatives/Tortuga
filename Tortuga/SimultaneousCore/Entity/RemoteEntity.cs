@@ -20,12 +20,12 @@ namespace SimultaneousCore.Entity
             _sim = sim;
         }
         
-        public void SendDeltaEnvelope(DeltaEnvelope deltaEnv)
+        public void RecieveDeltaEnvelope(DeltaEnvelope deltaEnv)
         {
             _sim.SendMessage(new EntityMessage<DeltaEnvelope>(Id, deltaEnv));
         }
 
-        public void SendFrameRecord(FrameCommands envelope)
+        public void RecieveFrameRecord(FrameCommands envelope)
         {
             _sim.SendMessage(new EntityMessage<FrameCommands>(Id, envelope));
         }

@@ -35,7 +35,7 @@ namespace Tortoise
         bool _renderController = true;
         LiteNetLibNetwork _controllerNet;
         SimultaneousSim _controllerSim;
-        PlayerEntity _controllerPlayer;
+        public PlayerEntity _controllerPlayer;
 
         bool _renderAuthority = true;
         LiteNetLibNetwork _authorityNet;
@@ -123,7 +123,7 @@ namespace Tortoise
             if (simsJoined == 2)
             {
                 _authorityPlayer = new PlayerEntity(this);
-                _authoritySim.NewEntity(_authorityPlayer, _controllerSim.Id, 50);
+                _authoritySim.NewEntity(_authorityPlayer, _controllerSim.Id, 250);
             }
         }
 
@@ -190,7 +190,8 @@ namespace Tortoise
                 _drawDevice.DrawCircle(_observerPlayer.Position, 10, 9, RgbaFloat.Yellow);
             }
 
-            textRenderer.DrawText($"FPS: {1f / time}", new Vector2(10, 10));
+            textRenderer.DrawText($"FPS: {1f / time}", new Vector2(0, 0));
+            textRenderer.DrawText($"Position: {_controllerPlayer?.Position.X}, {_controllerPlayer?.Position.Y}", new Vector2(0, 30));
         }
 
         public double GetDeltaTime()
@@ -300,10 +301,6 @@ namespace Tortoise
 
         public void Simulate(float deltaTime)
         {
-            //if (_game._authorityPlayer == this)
-            //{
-            //    Console.WriteLine("Simulating Authority");
-            //}
             //Position += Velocity * (deltaTime / 1000) * 50;
             Position += Velocity;
         }
